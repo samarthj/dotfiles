@@ -1,11 +1,13 @@
 #!/bin/bash
 
-echo "Setting up dofiles..."
+echo "Setting up dotfiles..."
+
+SCRIPT_DIR=$(dirname "$0")
 
 replace_file() {
   FILE=$1
   DIR=$2
-  LOC=${3:-$(pwd)}
+  LOC=${3:-$(pwd)/${SCRIPT_DIR##./}}
   echo "${LOC}/${FILE} -> ${DIR}/${FILE}"
   if [ -L "${DIR}/${FILE}" ]; then
     rm "${DIR}/${FILE}"
@@ -24,8 +26,6 @@ declare -a files=(
   ".vimrc"
   ".zpreztorc"
   ".zshrc"
-  "personal.aliasrc"
-  "personal.pathrc"
 )
 
 for file in "${files[@]}"; do
@@ -38,12 +38,11 @@ declare -a config_folders=(
   "nvim"
   "alacritty"
   "tmux"
-  "filebot-formats"
 )
 
 for conf in "${config_folders[@]}"; do
   dir="${config_dir}/${conf}"
-  frm="$(pwd)/${conf}"
+  frm="$(pwd)/${SCRIPT_DIR##./}/${conf}"
   if [ ! -d "$frm" ]; then
     continue
   fi
@@ -54,4 +53,3 @@ for conf in "${config_folders[@]}"; do
 done
 
 echo "Done! Reloading..."
-exec zsh

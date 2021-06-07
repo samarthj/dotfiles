@@ -1,0 +1,135 @@
+# xpip install prompt_toolkit
+#$PROMPT = '{env_name}|{BOLD_GREEN}{cwd}|{gitstatus}\n{BOLD_INTENSE_RED}➤'
+#$RPROMPT = '{BOLD_GREEN}{user}@{hostname}'
+
+$XONSH_COLOR_STYLE = 'native'
+$XONSH_SHOW_TRACEBACK = True
+
+# XONTRIB CONFIG START
+
+#xontrib load abbrevs
+aliases['gst'] = 'git status'
+aliases['gp'] = ['git', 'push']
+aliases['gup'] = ['git', 'pull --rebase']
+
+
+aliases['ll'] = 'ls -la'
+aliases['la'] = 'ls -a'
+# gst  # Once you hit <space> or <return> 'gst' gets expanded to 'git status'.
+
+# xpip install xpip install xontrib-argcomplete
+xontrib load argcomplete
+
+# name of the venv folder. If found will activate it.
+# if set to None then local folder activation will not work.
+$XSH_AVOX_VENV_NAME = ".venv"
+
+# virtualenv activation/deactication
+#xontrib load autovox
+
+# xpip install xonsh-autoxsh
+#xontrib load autoxsh
+
+# Policy for autovox based on project directories
+# xpip install xontrib-avox xontrib-avox-poetry poetry
+#xontrib load avox avox_poetry
+
+# preserve directory session
+# xpip install xontrib-back2dir
+#xontrib load back2dir
+
+#xontrib load base16_shell
+
+xontrib load bashisms
+
+# no escaping required
+# xpip install xontrib-cd
+xontrib load cd
+
+# xpip install xontrib-cmd-durations
+# brew install xdotool
+#xontrib load cmd_done
+
+# xpip install xontrib-commands backtrace
+xontrib load commands
+
+xontrib load coreutils
+
+# xpip install xonsh-direnv
+#xontrib load direnv
+
+# The xonsh.proc module has been deprecated in favor of the xonsh.procs subpackage.
+xontrib load distributed
+
+# xpip install xonsh-docker-tabcomplete
+#xontrib load docker_tabcomplete
+
+# xpip install xontrib-fzf-widgets
+xontrib load fzf-widgets
+
+# xpip install xontrib-gitinfo
+# brew install onefetch
+xontrib load gitinfo
+
+# xpip install xontrib-hist-navigator
+xontrib load hist_navigator
+
+# xpip install xontrib-histcpy
+xontrib load histcpy
+
+# xpip install jedi
+xontrib load jedi
+
+# xpip install xontrib-output-search
+#xontrib load output_search
+
+# xpip install xontrib-pipeliner
+xontrib load pipeliner
+
+# xpip install xontrib-powerline3 xontrib-powerline-binding
+#xontrib load powerline3
+#xontrib load powerline_binding
+
+$XONTRIB_PROMPT_BAR_LEFT = '{cwd_abs#accent}|{gitstatus#section}>'
+$XONTRIB_PROMPT_BAR_RIGHT = '<{user}@{hostname#accent#section}|{date_time_tz}'
+
+
+# xpip install xontrib-prompt-bar
+xontrib load prompt_bar
+
+xontrib load prompt_ret_code
+
+# xpip install xontrib-pyenv
+#xontrib load pyenv
+
+# xpip install xontrib-readable-traceback
+xontrib load readable-traceback
+
+# task scheduling
+# xpip install xontrib-schedule
+#xontrib load schedule
+
+# xpip install xontrib-sh
+xontrib load sh
+
+# xontrib load ssh_agent
+xontrib load ssh_agent
+
+xontrib load whole_word_jumping
+
+# install anaconda - https://docs.continuum.io/anaconda/install/linux/
+# conda install -c conda-forge xo
+# xpip install exofrills
+#xontrib load xo
+
+# print temp traceback log
+#xontrib load xog
+
+# track dir usage
+# xpip install xontrib-z
+#xontrib load z
+
+# XONTRIB CONFIG END
+
+
+$PATH.append("/home/linuxbrew/.linuxbrew/bin")

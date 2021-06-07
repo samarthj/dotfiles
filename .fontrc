@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Setup some fonts
+mkdir -p "$XDG_DATA_HOME"/fonts
+cd "$XDG_DATA_HOME"/fonts || exit 1
+
+git init
+git config core.sparseCheckout true
+
+touch .git/info/sparse-checkout
+cat .git/info/sparse-checkout <<EOU
+install.sh
+patched-fonts/FiraCode/*/complete/*Font Complete Mono.*tf
+patched-fonts/FiraCode/*/complete/*Font Complete.*tf
+patched-fonts/Meslo/*/*/complete/*Font Complete Mono.*tf
+patched-fonts/Meslo/*/*/complete/*Font Complete.*tf
+patched-fonts/OpenDyslexic/*/complete/*Font Complete Mono.*tf
+patched-fonts/OpenDyslexic/*/complete/*Font Complete.*tf
+EOU
+
+git remote add origin https://github.com/ryanoasis/nerd-fonts.git
+git pull
+
+fc-cache -f -v

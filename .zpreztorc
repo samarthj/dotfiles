@@ -1,0 +1,96 @@
+#!/bin/bash
+
+source "${HOME}"/.installrc
+#source .fontrc
+
+# download prezto
+[[ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]] || git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+
+# setting up zplug as the plugin manager for zsh
+export ZPLUG_HOME=$XDG_DATA_HOME/zplug
+install_zplug
+source "$ZPLUG_HOME"/init.zsh
+
+# Programs
+zplug "plugins/brew", from: oh-my-zsh
+zplug "plugins/docker", from: oh-my-zsh
+zplug "plugins/git", from: oh-my-zsh
+zplug "plugins/github", from: oh-my-zsh
+zplug "plugins/gitignore", from: oh-my-zsh
+zplug "plugins/golang", from: oh-my-zsh
+zplug "plugins/node", from: oh-my-zsh
+zplug "plugins/npm", from: oh-my-zsh
+zplug "plugins/nvm", from: oh-my-zsh
+zplug "plugins/pip", from: oh-my-zsh
+zplug "plugins/ruby", from: oh-my-zsh
+
+# Completions
+zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-history-substring-search"
+
+# OS specific plugins
+is_os ubuntu && zplug "plugins/ubuntu" from: oh-my-zsh
+is_os manjaro && zplug "plugins/archlinux" from: oh-my-zsh
+is_os amzn && zplug "plugins/yum" from: oh-my-zsh
+prog_exists kate && zplug "plugins/kate" from: oh-my-zsh
+
+# Admin bundles
+zplug "plugins/systemadmin" from: oh-my-zsh
+zplug "plugins/systemd" from: oh-my-zsh
+
+# Directory hopping
+zplug "clvv/fasd"
+zplug "b4b4r07/enhancd", use:init.sh
+zplug "junegunn/fzf-bin", \
+  from:gh-r, \
+  as:command, \
+  rename-to:fzf
+zplug "Peltoche/lsd"
+
+# File / Directory management
+zplug "plugins/copybuffer" from: oh-my-zsh
+zplug "plugins/copyfile" from: oh-my-zsh
+zplug "plugins/zsh-interactive-cd" from: oh-my-zsh
+
+# Tool candy
+# shellcheck disable=SC2016
+zplug "b4b4r07/httpstat", \
+  as:command, \
+  use:'(*).sh', \
+  rename-to:'$1'
+
+# Set the priority when loading
+# e.g., zsh-syntax-highlighting must be loaded
+# after executing compinit command and sourcing other plugins
+# (If the defer tag is given 2 or above, run after compinit command)
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+
+# prezto
+zplug "modules/prompt", from:prezto
+# Theme
+zplug "romkatv/powerlevel10k", as:theme, depth:1
+
+# Self Management!!!
+zplug 'zplug/zplug', hook-build:'zplug --self-manage'
+
+# zplug check returns true if all packages are installed
+# Therefore, when it returns false, run zplug install
+if ! zplug check; then
+  zplug install
+fi
+
+# source plugins and add commands to the PATH
+zplug load
+if zplug check b4b4r07/enhancd; then
+  # setting if enhancd is available
+  export ENHANCD_FILTER=fzf-tmux
+fi
+
+# Set the prompt theme to load.
+# Setting it to 'random' loads a random theme.
+# Auto set to 'off' on dumb terminals.
+zstyle ':prezto:module:prompt' theme 'powerlevel10k'
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# shellcheck disable=SC1090
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

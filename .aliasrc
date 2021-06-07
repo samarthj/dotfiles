@@ -1,0 +1,136 @@
+#!/bin/bash
+setopt +o nomatch
+
+set-title() {
+  echo -e "\e]0;$*\007"
+}
+
+ssh() {
+  set-title "$@"
+  /usr/bin/ssh -2 "$@"
+  set-title "$HOST"
+}
+
+nvim-qt() {
+  if [ "$#" -eq 1 ] && [ -f "$1" ] && [ ! -w "$1" ]; then
+    echo "Editing readonly file..."
+    sudo /usr/bin/nvim-qt "$@"
+  else
+    /usr/bin/nvim-qt "$@"
+  fi
+}
+
+alias nq='nvim-qt'
+
+nvim() {
+  if [ "$#" -eq 1 ] && [ -f "$1" ] && [ ! -w "$1" ]; then
+    echo "Editing readonly file..."
+    sudo -e "$@"
+  else
+    /usr/bin/nvim "$@"
+  fi
+}
+
+alias n='nvim'
+
+vim() {
+  if [ "$#" -eq 1 ] && [ -f "$1" ] && [ ! -w "$1" ]; then
+    echo "Editing readonly file..."
+    sudo -e "$@"
+  else
+    /usr/bin/vim "$@"
+  fi
+}
+
+alias pbk="/home/sam/.local/bin/buildctl --addr podman-container://buildkitd"
+
+global-find() {
+  cd / || return
+  sudo find -D opt \
+    \( -path "*overlay*" \
+    -o -path "./proc" \
+    -o -path "./mnt/EVOPlus/tmp" \
+    -o -path "./mnt/SiliconPower/pacman_tmp" \
+    -o -path "*timeshift*" \
+    -o -path "./var/cache" \
+    -o -path "./srv/nfs" \
+    -o -path "./usr/share/man" \) -prune -false -o \
+    "$@" \
+    2>/dev/null
+  cd - || return
+}
+
+# Helpful aliases
+
+# shellcheck disable=SC1091
+source "$HOME"/personal.aliasrc
+alias src-aliases='source ~/.aliasrc'
+
+# secrets
+alias reload-keys="keychain --eval --noask --agents ssh --inherit any"
+alias gpgkey="keychain -Q --eval --noask --agents gpg EFD3610504F2D28E9F2FE265A99A281050C277BB"
+alias sshkey="keychain -Q --eval --noask --agents ssh id_rsa"
+alias ls='lsd'
+alias ll='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+alias lt='ls --tree'
+alias frigga="docker run --rm -it unfor19/frigga"
+
+pip3-upgrade() {
+  python3 -m pip install -U pip
+  # shellcheck disable=SC2046
+  python3 -m pip install -U $(python3 -m pip list --format json | jq '.[].name' -r | grep -v PyGObject | tr '\n' ' ' | sed 's/\s$//') |
+    grep -v "Requirement already satisfied"
+}
+alias nvim-plugins='nvim +PlugInstall +PlugUpdate +PlugUpgrade +CocUpdate +qall'
+
+update-all-the-things() {
+  echo "=======================================| Update pkgmgr |=============================================="
+  [[ ! -x "$(command -v pacman)" ]] || sudo pacman -Syyu
+  [[ ! -x "$(command -v apt)" ]] || aguu
+  echo "=======================================| Update flatpak |============================================="
+  [[ ! -x "$(command -v flatpak)" ]] || sudo flatpak update -y
+  echo "=======================================| Update linuxbrew |==========================================="
+  [[ ! -x "$(command -v brew)" ]] || brew update && brew upgrade && brew cleanup
+  echo "=======================================| Update pip3 |================================================"
+  [[ ! -x "$(command -v pip3)" ]] || pip3-upgrade
+  echo "=======================================| Update pipx |================================================"
+  [[ ! -x "$(command -v pipx)" ]] || pipx upgrade-all
+  echo "=======================================| Update plex |================================================"
+  update-plex-plugins
+  echo "=======================================| Update qb-web |================================================"
+  update-qb-web
+  echo "=======================================| Vim plugins |================================================"
+  nvim-plugins
+  echo "=======================================| Finished Updates |==========================================="
+}
+
+alias yaml2js="python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"
+
+# signin for 1password
+op_signin() {
+  if [[ -z "$OP_SESSION_my" ]]; then
+    eval "$(kwallet-query -f Passwords -r 1pass --display :0 kdewallet | op signin my)"
+  else
+    eval "$(kwallet-query -f Passwords -r 1pass --display :0 kdewallet | op signin my --session "$OP_SESSION_my")"
+  fi
+}
+
+# get op password
+op_get_pw() {
+  [[ -n "$OP_SESSION_my" ]] && op --cache get item "$1" --fields password --session "$OP_SESSION_my"
+  [[ $? -ne 0 ]] && op_signin && op_get_pw "$@"
+}
+
+# get op specific field
+op_get_field() {
+  [[ -n "$OP_SESSION_my" ]] && op --cache get item "$1" --fields "$2" --session "$OP_SESSION_my"
+  [[ $? -ne 0 ]] && op_signin && op_get_field "$@"
+}
+
+# get op totp
+op_get_totp() {
+  [[ -n "$OP_SESSION_my" ]] && op --cache get totp "$1" --session "$OP_SESSION_my"
+  [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
+}

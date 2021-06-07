@@ -1,0 +1,135 @@
+#!/bin/bash
+
+export DISABLE_UPDATE_PROMPT="true"
+export COMPLETION_WAITING_DOTS="true"
+export DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+source "${HOME}"/.installrc
+#source .fontrc
+
+antigen use oh-my-zsh
+
+# Autocomplete programs
+antigen bundle brew
+antigen bundle docker
+antigen bundle git
+antigen bundle github
+antigen bundle gitignore
+antigen bundle golang
+antigen bundle pip
+antigen bundle ruby
+
+# os specific bundles
+is_os ubuntu && antigen bundle ubuntu
+is_os manjaro && antigen bundle archlinux
+is_os amzn && antigen bundle yum
+prog_exists kate && antigen bundle kate
+
+# Admin bundles
+antigen bundle systemadmin
+antigen bundle systemd
+
+install_fasd
+
+# TODO: install fzf
+# fzf autocomplete
+# shellcheck disable=SC1090
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+# File / Directory management
+antigen bundle copybuffer
+antigen bundle copyfile
+antigen bundle fasd
+antigen bundle fzf
+antigen bundle zsh-interactive-cd
+
+# install tmux
+if [[ ! -x "$(command -v tmux)" ]]; then
+  echo "installing tmux..."
+  is_os ubuntu && sudo apt install -y tmux || \
+  is_os amzn && sudo yum install -y tmux || \
+  is_os manjaro && sudo pacman -Sy tmux --noconfirm
+fi
+
+# install neovim
+if [[ ! -x "$(command -v nvim)" ]]; then
+  echo "installing nvim..."
+  npm install -g neovim
+fi
+
+# Terminal Tweaks
+antigen bundle colored-man-pages
+antigen bundle colorize
+antigen bundle guiferpa/aterminal
+#antigen bundle tmux
+
+# Commandline Helpers
+antigen bundle alias-finder
+antigen bundle compleat
+antigen bundle common-aliases
+antigen bundle command-not-found
+antigen bundle cp
+antigen bundle encode64
+antigen bundle extract
+antigen bundle jsontools
+antigen bundle safe-paste
+# antigen bundle wulfgarpro/history-sync
+
+# Password Management
+if [[ ! -x "$(command -v pacman)" ]]; then
+  if [[ ! -x "$(command -v pass)" ]]; then
+    echo "installing pass..."
+    brew install pass
+  fi
+  if [[ ! -x "$(command -v keychain)" ]]; then
+    echo "installing keychain..."
+    brew install keychain
+  fi
+  antigen bundle pass
+  antigen bundle keychain
+fi
+
+# Syntax highlighting bundle
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-history-substring-search
+
+# Other bundles
+[[ -x "$(command -v ufw)" ]] && antigen bundle ufw
+antigen bundle urltools
+antigen bundle virtualenv # python3.8 -m pip install virtualenvwrapper
+antigen bundle web-search
+
+THEME=romkatv/powerlevel10k
+antigen theme $THEME
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+# shellcheck disable=SC1090
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# For standard themes like robyrussel, use the following line to load the theme so that antigen doesnot try to reload it
+# antigen list | grep $THEME; if [ $? -ne 0 ]; then antigen theme $THEME; fi
+
+antigen apply
+
+### Fix slowness of pastes with zsh-syntax-highlighting.zsh
+pasteinit() {
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+}
+
+pastefinish() {
+  zle -N self-insert $OLD_SELF_INSERT
+}
+zstyle :bracketed-paste-magic paste-init pasteinit
+zstyle :bracketed-paste-magic paste-finish pastefinish
+
+# zsh-history-substring-search configuration
+setopt hist_ignore_all_dups
+setopt hist_ignore_space
+
+bindkey "^[[A" history-substring-search-up
+bindkey "^[[B" history-substring-search-down
+# shellcheck disable=SC2154
+bindkey "${terminfo[kcuu1]}" history-substring-search-up
+bindkey "${terminfo[kcud1]}" history-substring-search-down
+export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1

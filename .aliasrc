@@ -45,22 +45,14 @@ vim() {
 alias pbk="/home/sam/.local/bin/buildctl --addr podman-container://buildkitd"
 
 global-find() {
-  cd / || return
-  sudo find -D opt \
-    \( -path "*overlay*" \
-    -o -path "./proc" \
-    -o -path "./mnt/EVOPlus/tmp" \
-    -o -path "./mnt/SiliconPower/pacman_tmp" \
-    -o -path "*timeshift*" \
-    -o -path "./var/cache" \
-    -o -path "./srv/nfs" \
-    -o -path "./usr/share/man" \) -prune -false -o \
-    "$@" \
-    2>/dev/null
-  cd - || return
+  sudo fd -E "timeshift" -E "overlay" \
+    -E "usr/share/man/*" \
+    -E "var/lib/docker/*" \
+    "$@" /
 }
 
 # Helpful aliases
+setup_rust_clis
 
 # shellcheck disable=SC1091
 source "$HOME"/personal.aliasrc
@@ -70,11 +62,6 @@ alias src-aliases='source ~/.aliasrc'
 alias reload-keys="keychain --eval --noask --agents ssh --inherit any"
 alias gpgkey="keychain -Q --eval --noask --agents gpg EFD3610504F2D28E9F2FE265A99A281050C277BB"
 alias sshkey="keychain -Q --eval --noask --agents ssh id_rsa"
-alias ls='lsd'
-alias ll='ls -l'
-alias la='ls -a'
-alias lla='ls -la'
-alias lt='ls --tree'
 alias frigga="docker run --rm -it unfor19/frigga"
 
 pip3-upgrade() {

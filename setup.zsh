@@ -38,6 +38,7 @@ declare -a config_folders=(
   "nvim"
   "alacritty"
   "tmux"
+  "bat"
 )
 
 for conf in "${config_folders[@]}"; do

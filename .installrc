@@ -158,3 +158,63 @@ install_docker
 install_dnsutils
 install_htop
 install_expect
+
+# Rust based utils
+install_rustup() {
+  prog_exists rustup && return
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+}
+install_rustup
+
+install_rust_clis() {
+  # du replacement
+  prog_exists dust || cargo install du-dust
+  # ps replacement
+  prog_exists procs || cargo install procs
+  # top replacement
+  prog_exists ytop || cargo install ytop
+  # grep replacement
+  prog_exists rg || cargo install ripgrep
+  # regex creation via test samples util
+  prog_exists grex || cargo install grex
+  # man alternative
+  prog_exists tldr || cargo install tealdeer &&
+    tldr --update 1>/dev/null
+  # ls replacement
+  prog_exists exa || cargo install exa
+  # s/sed/sd/g
+  prog_exists sd || cargo install sd
+  # cat replacement
+  prog_exists bat || cargo install bat
+  # git-diff pager
+  prog_exists delta || cargo install git-delta
+  # find replacement
+  prog_exists fd || cargo install fd-find
+
+}
+install_rust_clis
+
+# shellcheck disable=SC2139
+setup_rust_clis() {
+
+  mkdir -p ~/.zfunc
+
+  alias fd='$HOME/.cargo/bin/fd'
+
+  curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o ~/.zfunc/_fd
+  chmod +x ~/.zfunc/_fd
+
+  alias cat='bat --paging=never'
+
+  EXA_CMD='exa --icons --git -F'
+  alias ls="$EXA_CMD"
+  alias ll="$EXA_CMD -l"
+  alias la="$EXA_CMD -a"
+  alias lla="$EXA_CMD -la --sort=modified"
+  alias lt="$EXA_CMD --tree"
+  alias lg="$EXA_CMD --git-ignore"
+
+  curl -fsSL https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa -o ~/.zfunc/_exa
+  chmod +x ~/.zfunc/_exa
+  ln -sf ~/.zfunc/_exa ~/.zfunc/_ls
+}

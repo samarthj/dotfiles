@@ -43,9 +43,6 @@ echo "antigen loaded ..."
 # install ncurses-compat-libs
 cols=$(tput cols)
 
-autoload bashcompinit && bashcompinit
-complete -C 'aws_completer' aws
-
 # User configuration
 export MANPATH="/usr/local/man:$MANPATH"
 
@@ -71,10 +68,14 @@ source $HOME/.aliasrc
 echo "aliases loaded ..."
 
 # Forcing color in terminal
-export CLICOLOR=1
-export TERM=xterm-256color
+# export TERM=konsole-direct
+export COLORTERM=truecolor
 
 fpath=(~/.zsh/completion ~/.zfunc $fpath /home/linuxbrew/.linuxbrew/share/zsh/site-functions)
+
+autoload bashcompinit && bashcompinit
+complete -C 'aws_completer' aws
+
 autoload -Uz compinit && compinit -i
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.

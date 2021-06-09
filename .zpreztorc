@@ -46,7 +46,6 @@ zplug "junegunn/fzf-bin", \
   from:gh-r, \
   as:command, \
   rename-to:fzf
-zplug "Peltoche/lsd"
 
 # File / Directory management
 zplug "plugins/copybuffer" from: oh-my-zsh

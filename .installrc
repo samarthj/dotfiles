@@ -178,8 +178,8 @@ install_rust_clis() {
   # regex creation via test samples util
   prog_exists grex || cargo install grex
   # man alternative
-  prog_exists tldr || cargo install tealdeer &&
-    tldr --update 1>/dev/null
+  prog_exists tldr || (cargo install tealdeer &&
+    tldr --update 1>/dev/null)
   # ls replacement
   prog_exists exa || cargo install exa
   # s/sed/sd/g
@@ -190,7 +190,8 @@ install_rust_clis() {
   prog_exists delta || cargo install git-delta
   # find replacement
   prog_exists fd || cargo install fd-find
-
+  # cargo updates
+  prog_exists cargo-install-update || cargo install cargo-update
 }
 install_rust_clis
 
@@ -198,8 +199,6 @@ install_rust_clis
 setup_rust_clis() {
 
   mkdir -p ~/.zfunc
-
-  alias fd='$HOME/.cargo/bin/fd'
 
   curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o ~/.zfunc/_fd
   chmod +x ~/.zfunc/_fd

@@ -1,0 +1,13 @@
+.antigen
+.cache
+.cargo
+.git
+.local
+.phoronix*/
+.steam
+node_modules
+Plex Media Server
+timeshift
+var/cache
+tmp/
+pamac_tmp/

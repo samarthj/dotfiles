@@ -84,6 +84,11 @@ update-all-the-things() {
   [[ ! -x "$(command -v pip3)" ]] || pip3-upgrade
   echo "=======================================| Update pipx |================================================"
   [[ ! -x "$(command -v pipx)" ]] || pipx upgrade-all
+  echo "=======================================| Update cargo |================================================"
+  [[ ! -x "$(command -v cargo-install-update)" ]] || cargo install-update -a
+  [[ ! -x "$(command -v pipx)" ]] || pipx upgrade-all
+  echo "=======================================| Update npm |================================================"
+  [[ ! -x "$(command -v npm)" ]] || npm update -g --all
   echo "=======================================| Update plex |================================================"
   update-plex-plugins
   echo "=======================================| Update qb-web |================================================"
@@ -121,3 +126,8 @@ op_get_totp() {
   [[ -n "$OP_SESSION_my" ]] && op --cache get totp "$1" --session "$OP_SESSION_my"
   [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
 }
+
+unalias fd
+export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
+  --ignore-file ~/ws/my_dotfiles/main/.fdignore"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"

@@ -109,3 +109,5 @@ bindkey -M vicmd '^[^T' renew_tmux_env
 bindkey -M viins '^[^T' renew_tmux_env
 
 umask 002
+
+[ -f $HOME/addon.zshrc ] && source $HOME/addon.zshrc

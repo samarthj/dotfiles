@@ -6,26 +6,7 @@ if [[ -r ${p10k_instant_prompt} ]]; then
   source ${p10k_instant_prompt}
 fi
 
-export DOCKER_BUILDKIT=1
-export XDG_RUNTIME_DIR="/run/user/1000"
-
-# if [[ -z $WAYLAND_DISPLAY && -f "/run/user/1000/wayland-"* ]]; then
-#   export WAYLAND_DISPLAY=$(echo ${${"$(ls /run/user/1000/wayland-* &2>/dev/null)"##*/}%.*})
-# fi
-
-if [[ -n $WAYLAND_DISPLAY ]]; then
-  export QT_QPA_PLATFORM="wayland-egl"
-else
-  export QT_QPA_PLATFORM="xcb"
-  unset WAYLAND_DISPLAY
-fi
-
-export GTK_USE_PORTAL=1
-
-#export VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/amd_pro_icd64.json
-
-#export PINENTRY="/usr/bin/pinentry-tty"
-export EDITOR=nvim
+source $HOME/.env
 
 zmodload zsh/mapfile
 

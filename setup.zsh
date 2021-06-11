@@ -22,6 +22,7 @@ declare -a files=(
   ".antigenrc"
   ".fdignore"
   ".installrc"
+  ".env"
   ".p10k.zsh"
   ".tmux.conf"
   ".vimrc"

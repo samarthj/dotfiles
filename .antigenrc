@@ -4,6 +4,7 @@ export DISABLE_UPDATE_PROMPT="true"
 export COMPLETION_WAITING_DOTS="true"
 export DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# shellcheck disable=SC1090
 source "${HOME}"/.installrc
 #source .fontrc
 
@@ -30,12 +31,6 @@ antigen bundle systemadmin
 antigen bundle systemd
 
 install_fasd
-
-# TODO: install fzf
-# fzf autocomplete
-# shellcheck disable=SC1090
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 
 # File / Directory management
 antigen bundle copybuffer

@@ -142,6 +142,14 @@ install_htop() {
   os_install htop
 }
 
+install_fzf() {
+  prog_exists fzf && return
+  os_install fzf ||
+    brew install fzf
+  # shellcheck disable=SC1090
+  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+}
+
 install_expect() {
   prog_exists expect && return
   os_install expect
@@ -157,6 +165,7 @@ install_nvm
 install_docker
 install_dnsutils
 install_htop
+install_fzf
 install_expect
 
 # Rust based utils

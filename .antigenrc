@@ -76,6 +76,7 @@ antigen bundle jsontools
 antigen bundle safe-paste
 # antigen bundle wulfgarpro/history-sync
 
+antigen bundle ssh-agent
 # Password Management
 if [[ ! -x "$(command -v pacman)" ]]; then
   if [[ ! -x "$(command -v pass)" ]]; then

@@ -54,8 +54,8 @@ global-find() {
 # Helpful aliases
 setup_rust_clis
 
-# shellcheck disable=SC1090
-source "$HOME"/personal.aliasrc
+# shellcheck disable=SC1090,SC1091
+source "$HOME/personal.aliasrc"
 alias src-aliases='source ~/.aliasrc'
 
 # secrets
@@ -78,28 +78,29 @@ brew-upgrade() {
   brew cleanup
 }
 
+#shellcheck disable=SC2046
 update-all-the-things() {
   echo "=======================================| Update pkgmgr |=============================================="
-  [[ ! -x "$(command -v pacman)" ]] || sudo pacman -Syyu
-  [[ ! -x "$(command -v apt)" ]] || aguu
+  command -v pacman && sudo pacman -Syyu
+  command -v apt && aguu
   echo "=======================================| Update flatpak |============================================="
-  [[ ! -x "$(command -v flatpak)" ]] || sudo flatpak update -y
+  command -v flatpak && sudo flatpak update -y
   echo "=======================================| Update linuxbrew |==========================================="
-  [[ ! -x "$(command -v brew)" ]] || brew-upgrade
+  command -v brew && brew-upgrade
   echo "=======================================| Update pip3 |================================================"
-  [[ ! -x "$(command -v pip3)" ]] || pip3-upgrade
+  command -v pip3 && pip3-upgrade
   echo "=======================================| Update pipx |================================================"
-  [[ ! -x "$(command -v pipx)" ]] || pipx upgrade-all
+  command -v pipx && pipx upgrade-all
   echo "=======================================| Update cargo |================================================"
-  [[ ! -x "$(command -v cargo-install-update)" ]] || cargo install-update -a
+  command -v cargo-install-update && cargo install-update -a
   echo "=======================================| Update npm |================================================"
-  [[ ! -x "$(command -v npm)" ]] || npm update -g --all
+  command -v npm && npm update -g --all
   echo "=======================================| Update plex |================================================"
-  [[ ! -x "$(command -v update-plex-plugins)" ]] || update-plex-plugins
+  command -v update-plex-plugins && update-plex-plugins
   echo "=======================================| Update qb-web |================================================"
-  [[ ! -x "$(command -v update-qb-web)" ]] || update-qb-web
+  command -v update-qb-web && update-qb-web
   echo "=======================================| fwupdmgr update |============================================"
-  [[ ! -x "$(command -v fwupmgr-upgrade)" ]] || fwupmgr-upgrade
+  command -v fwupdmgr-upgrade && fwupmgr-upgrade
   echo "=======================================| Vim plugins |================================================"
   nvim-plugins
   echo "=======================================| Finished Updates |==========================================="
@@ -142,3 +143,5 @@ unalias fd
 export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
   --ignore-file ~/ws/my_dotfiles/main/.fdignore"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+alias dc-pup='docker-compose pull && docker-compose up --force-recreate -d'
+alias dc-up='docker-compose up -d'

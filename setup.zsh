@@ -20,9 +20,9 @@ replace_file() {
 declare -a files=(
   ".aliasrc"
   ".antigenrc"
+  ".env"
   ".fdignore"
   ".installrc"
-  ".env"
   ".p10k.zsh"
   ".tmux.conf"
   ".vimrc"

@@ -67,7 +67,12 @@ alias frigga="docker run --rm -it unfor19/frigga"
 pip3-upgrade() {
   python3 -m pip install -U pip
   # shellcheck disable=SC2046
-  python3 -m pip install -U $(python3 -m pip list --format json | jq '.[].name' -r | grep -v PyGObject | tr '\n' ' ' | sed 's/\s$//') |
+  python3 -m pip install -U \
+	  $(python3 -m pip list --format json | 
+	  	jq '.[].name' -r | 
+		grep -v PyGObject | 
+		tr '\n' ' ' | 
+		sed 's/\s$//') |
     grep -v "Requirement already satisfied"
 }
 alias nvim-plugins='nvim +PlugInstall +PlugUpdate +PlugUpgrade +CocUpdate +qall'

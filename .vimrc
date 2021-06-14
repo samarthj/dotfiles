@@ -47,9 +47,12 @@ Plug 'plasticboy/vim-markdown'
 Plug 'cespare/vim-toml'
 Plug 'kevinoid/vim-jsonc'
 
-" nvim
-Plug 'navarasu/onedark.nvim'
-Plug 'hoob3rt/lualine.nvim'
+if has('nvim')
+  " lspconfig
+  Plug 'neovim/nvim-lspconfig'
+  " coc-config
+  Plug 'neoclide/coc.nvim', {'branch': 'release'}
+endif
 
 " All of your Plugins must be added before the following line
 call plug#end()

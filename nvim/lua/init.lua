@@ -23,5 +23,6 @@ base16.setup(vim.g.base16_theme)
 utils.load('plugins')
 utils.load('tabline')
 utils.load('statusline')
+require('key_bindings')
 
 return M

@@ -94,6 +94,37 @@ install_gcc() {
     brew install gcc
 }
 
+install_neovim() {
+  prog_exists nvim && return
+  is_os manjaro && os_install neovim-nightly-bin
+  is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
+  prog_exists nvim || brew install --HEAD neovim
+
+  # install the addons
+  prog_exists python3 && python -m pip install pynvim
+  prog_exists ruby && gem install neovim
+  prog_exists pipx && pipx install cmake-language-server
+  prog_exists yarn && (
+    yarn global add \
+      bash-language-server \
+      diagnostic-languageserver \
+      dockerfile-language-server-nodejs \
+      graphql-language-service-cli graphql typescript \
+      intelephense \
+      neovim \
+      pyright \
+      sql-language-server \
+      typescript-language-server \
+      vim-language-server \
+      yaml-language-server \
+      vscode-langservers-extracted #css, html, json
+  )
+  os_install lua-language-server
+  os_install rust-analyzer
+  git clone https://github.com/wbthomason/packer.nvim \
+    "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/packer/start/packer.nvim
+}
+
 install_nvm() {
   export NVM_DIR="$HOME/.nvm"
   script_exists "$NVM_DIR"/nvm.sh && return

@@ -48,10 +48,7 @@ if [[ ! -x "$(command -v tmux)" ]]; then
 fi
 
 # install neovim
-if [[ ! -x "$(command -v nvim)" ]]; then
-  echo "installing nvim..."
-  npm install -g neovim
-fi
+install_neovim
 
 # Terminal Tweaks
 antigen bundle colored-man-pages

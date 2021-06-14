@@ -47,12 +47,9 @@ Plug 'plasticboy/vim-markdown'
 Plug 'cespare/vim-toml'
 Plug 'kevinoid/vim-jsonc'
 
-if has('nvim')
-  " lspconfig
-  Plug 'neovim/nvim-lspconfig'
-  " coc-config
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
-endif
+" nvim
+Plug 'navarasu/onedark.nvim'
+Plug 'hoob3rt/lualine.nvim'
 
 " All of your Plugins must be added before the following line
 call plug#end()
@@ -229,7 +226,7 @@ endif
 
 
 " coc extensions
-let g:coc_global_extensions = ['coc-json', 'coc-git', 'coc-go', 'coc-html', 'coc-tsserver', 'coc-sh', 'coc-pyright', 'coc-markdownlint' ]
+let g:coc_global_extensions = ['coc-git', 'coc-tsserver', 'coc-markdownlint' ]
 
 " coc-configuration
 " https://github.com/neoclide/coc.nvim

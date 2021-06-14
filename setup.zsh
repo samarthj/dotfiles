@@ -17,6 +17,18 @@ replace_file() {
   ln -s "${LOC}/${FILE}" "${DIR}/${FILE}"
 }
 
+replace_dir() {
+  CURR=$1
+  DIR=$2
+  echo "${CURR} -> ${DIR}"
+  if [ -L "${DIR}" ]; then
+    rm -f "${DIR}"
+  elif [ -d "${DIR}" ]; then
+    mv "${DIR}" "${DIR}".orig
+  fi
+  ln -sf "${CURR}" "${DIR}"
+}
+
 declare -a files=(
   ".aliasrc"
   ".antigenrc"
@@ -50,9 +62,7 @@ for conf in "${config_folders[@]}"; do
     continue
   fi
   mkdir -p "$dir"
-  for file in "$frm/"*; do
-    replace_file "${file##*/}" "${dir}" "${frm}"
-  done
+  replace_dir "${frm}" "${dir}"
 done
 
 echo "Done! Reloading..."

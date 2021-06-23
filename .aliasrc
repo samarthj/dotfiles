@@ -68,14 +68,14 @@ pip3-upgrade() {
   python3 -m pip install -U pip
   # shellcheck disable=SC2046
   python3 -m pip install -U \
-	  $(python3 -m pip list --format json | 
-	  	jq '.[].name' -r | 
-		grep -v PyGObject | 
-		tr '\n' ' ' | 
-		sed 's/\s$//') |
+    $(python3 -m pip list --format json |
+      jq '.[].name' -r |
+      grep -v PyGObject |
+      tr '\n' ' ' |
+      sed 's/\s$//') |
     grep -v "Requirement already satisfied"
 }
-alias nvim-plugins='nvim +PlugInstall +PlugUpdate +PlugUpgrade +CocUpdate +qall'
+alias nvim-plugins='nvim +PackerSync +PackerUpdate +qall'
 
 brew-upgrade() {
   brew update
@@ -86,7 +86,7 @@ brew-upgrade() {
 #shellcheck disable=SC2046
 update-all-the-things() {
   echo "=======================================| Update pkgmgr |=============================================="
-  command -v pacman && sudo pacman -Syyu
+  command -v pacman && sudo pacman -Sy && sudo powerpill -Su && paru -Su
   command -v apt && aguu
   echo "=======================================| Update flatpak |============================================="
   command -v flatpak && sudo flatpak update -y
@@ -107,7 +107,7 @@ update-all-the-things() {
   echo "=======================================| fwupdmgr update |============================================"
   command -v fwupdmgr-upgrade && fwupmgr-upgrade
   echo "=======================================| Vim plugins |================================================"
-  nvim-plugins
+  command -v nvim-plugins && nvim-plugins
   echo "=======================================| Finished Updates |==========================================="
 }
 
@@ -148,5 +148,5 @@ unalias fd
 export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
   --ignore-file ~/ws/my_dotfiles/main/.fdignore"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-alias dc-pup='docker-compose pull && docker-compose up --force-recreate -d'
+alias dc-pup='docker-compose pull && docker-compose up --force-recreate -d && docker image prune -f'
 alias dc-up='docker-compose up -d'

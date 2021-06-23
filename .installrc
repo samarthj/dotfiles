@@ -243,7 +243,7 @@ setup_rust_clis() {
   curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o ~/.zfunc/_fd
   chmod +x ~/.zfunc/_fd
 
-  alias cat='bat --paging=never'
+  alias cat='bat --paging=never -A'
 
   EXA_CMD='exa --icons --git -F'
   alias ls="$EXA_CMD"

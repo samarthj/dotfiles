@@ -283,7 +283,7 @@ local function refresh_stl_cache()
         guibg = cl.bg,
         override = 'LspDiagnosticsDefaultError'
     }
-    vim.opt.statusline = '%!v:lua.get_cached_stl()'
+    vim.o.statusline = '%!v:lua.get_cached_stl()'
     cached_primary_stl = build_stl()
     cached_secondary_stl = build_inactive_stl()
 end

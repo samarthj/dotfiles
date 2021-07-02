@@ -66,7 +66,9 @@ local function load(use)
             local cfg = {
                 sorting_strategy = 'ascending',
                 prompt_prefix = u 'f002' .. ' ',
-                prompt_position = 'top',
+                layout_config = {
+                  prompt_position = 'top',
+                },
                 selection_caret = u 'f054' .. ' ',
                 color_devicons = true,
                 scroll_strategy = 'cycle',

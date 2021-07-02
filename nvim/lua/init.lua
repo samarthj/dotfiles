@@ -18,9 +18,9 @@ function M.yank_highlight()
     end
 end
 
+utils.load('plugins')
 local base16 = require('base16-colorscheme')
 base16.setup(vim.g.base16_theme)
-utils.load('plugins')
 utils.load('tabline')
 utils.load('statusline')
 require('key_bindings')

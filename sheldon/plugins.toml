@@ -1,0 +1,40 @@
+shell = "zsh"
+
+[plugins.zsh-defer]
+github = 'romkatv/zsh-defer'
+
+[plugins.oh-my-zsh]
+github = 'ohmyzsh/ohmyzsh'
+
+[plugins.powerlevel10k]
+github = 'romkatv/powerlevel10k'
+
+[plugins.enhancd]
+github = 'b4b4r07/enhancd'
+
+[plugins."z.lua"]
+github = 'skywind3000/z.lua'
+
+[plugins.fzf]
+github = 'junegunn/fzf'
+
+[plugins.blackbox]
+github = "StackExchange/blackbox"
+
+[plugins.zsh-completions]
+github = 'zsh-users/zsh-completions'
+
+[plugins.zsh-autosuggestions]
+github = 'zsh-users/zsh-autosuggestions'
+use    = ['{{ name }}.zsh']
+
+[plugins.zsh-syntax-highlighting]
+apply  = ["defer"]
+github = "zsh-users/zsh-syntax-highlighting"
+
+[plugins.zsh-history-substring-search]
+apply  = ['defer']
+github = 'zsh-users/zsh-history-substring-search'
+
+[templates]
+defer = {value = 'zsh-defer source "{{ file }}"', each = true}

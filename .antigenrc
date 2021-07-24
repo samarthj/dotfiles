@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Antigen Setup
+[[ -f $HOME/antigen.zsh ]] || curl -L git.io/antigen >$HOME/antigen.zsh
+export ANTIGEN_DEFAULT_REPO_URL=https://github.com/custom/oh-my-zsh
+export ANTIGEN_COMPDUMPFILE=$HOME/.zcompdump
+
 export DISABLE_UPDATE_PROMPT="true"
 export COMPLETION_WAITING_DOTS="true"
 export DISABLE_UNTRACKED_FILES_DIRTY="true"
@@ -30,25 +35,12 @@ prog_exists kate && antigen bundle kate
 antigen bundle systemadmin
 antigen bundle systemd
 
-install_fasd
-
 # File / Directory management
 antigen bundle copybuffer
 antigen bundle copyfile
 antigen bundle fasd
 antigen bundle fzf
 antigen bundle zsh-interactive-cd
-
-# install tmux
-if [[ ! -x "$(command -v tmux)" ]]; then
-  echo "installing tmux..."
-  is_os ubuntu && sudo apt install -y tmux || \
-  is_os amzn && sudo yum install -y tmux || \
-  is_os manjaro && sudo pacman -Sy tmux --noconfirm
-fi
-
-# install neovim
-install_neovim
 
 # Terminal Tweaks
 antigen bundle colored-man-pages
@@ -71,14 +63,8 @@ antigen bundle safe-paste
 antigen bundle ssh-agent
 # Password Management
 if [[ ! -x "$(command -v pacman)" ]]; then
-  if [[ ! -x "$(command -v pass)" ]]; then
-    echo "installing pass..."
-    brew install pass
-  fi
-  if [[ ! -x "$(command -v keychain)" ]]; then
-    echo "installing keychain..."
-    brew install keychain
-  fi
+  install_pass
+  install_keychain
   antigen bundle pass
   antigen bundle keychain
 fi
@@ -89,10 +75,10 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-history-substring-search
 
 # Other bundles
-[[ -x "$(command -v ufw)" ]] && antigen bundle ufw
-antigen bundle urltools
-antigen bundle virtualenv # python3.8 -m pip install virtualenvwrapper
-antigen bundle web-search
+# [[ -x "$(command -v ufw)" ]] && antigen bundle ufw
+# antigen bundle urltools
+# antigen bundle virtualenv # python3.8 -m pip install virtualenvwrapper
+# antigen bundle web-search
 
 THEME=romkatv/powerlevel10k
 antigen theme $THEME

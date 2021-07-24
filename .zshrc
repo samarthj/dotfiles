@@ -6,20 +6,22 @@ if [[ -r ${p10k_instant_prompt} ]]; then
   source ${p10k_instant_prompt}
 fi
 
+setopt appendhistory autocd extendedglob notify
+
 source $HOME/.env
 
 zmodload zsh/mapfile
 
-source $HOME/personal.pathrc
+[ -f $HOME/personal.pathrc ] && source $HOME/personal.pathrc
 echo "paths loaded ..."
 
-# Antigen Setup
-[[ -f $HOME/antigen.zsh ]] || curl -L git.io/antigen >$HOME/antigen.zsh
-export ANTIGEN_DEFAULT_REPO_URL=https://github.com/custom/oh-my-zsh
-export ANTIGEN_COMPDUMPFILE=$HOME/.zcompdump
-source $HOME/antigen.zsh
-antigen init $HOME/.antigenrc
-echo "antigen loaded ..."
+# ssh
+export SSH_KEY_PATH="~/.ssh/id_rsa"
+zstyle :omz:plugins:ssh-agent agent-forwarding on
+zstyle :omz:plugins:ssh-agent identities id_rsa aur id_ed25519
+
+# sheldon setup
+source $HOME/sheldon.zsh
 
 # install ncurses-compat-libs
 cols=$(tput cols)
@@ -32,18 +34,6 @@ export LANG=en_US.UTF-8
 
 # Compilation flags
 export ARCHFLAGS="-arch x86_64"
-
-# ssh
-export SSH_KEY_PATH="~/.ssh/id_rsa"
-zstyle :omz:plugins:ssh-agent agent-forwarding on
-zstyle :omz:plugins:ssh-agent identities id_rsa aur
-
-echo "post antigen config loaded ..."
-
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
-# users are encouraged to define aliases within the ZSH_CUSTOM folder.
-# For a full list of active aliases, run `alias`.
 
 source $HOME/.aliasrc
 echo "aliases loaded ..."
@@ -63,12 +53,8 @@ autoload -Uz compinit && compinit -i
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 echo "p10k loaded ..."
 
-# aws autocomplete
-complete -C 'aws_completer' aws
-
 autoload -U bashcompinit
 bashcompinit
-eval "$(register-python-argcomplete pipx)"
 
 # pip zsh completion start
 function _pip_completion {
@@ -83,7 +69,6 @@ compctl -K _pip_completion pip3
 # pip zsh completion end
 
 # Renew environment variables in tmux
-
 if [ -n "$TMUX" ]; then
   function renew_tmux_env_one {
     oneenv=$(tmux show-environment | grep "^$1")

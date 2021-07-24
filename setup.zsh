@@ -31,14 +31,14 @@ replace_dir() {
 
 declare -a files=(
   ".aliasrc"
-  ".antigenrc"
   ".env"
   ".fdignore"
+  "helper.installrc"
   ".installrc"
   ".p10k.zsh"
+  "sheldon.zsh"
   ".tmux.conf"
   ".vimrc"
-  ".zpreztorc"
   ".zshrc"
 )
 
@@ -53,6 +53,7 @@ declare -a config_folders=(
   "alacritty"
   "tmux"
   "bat"
+  "sheldon"
 )
 
 for conf in "${config_folders[@]}"; do

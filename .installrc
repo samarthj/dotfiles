@@ -1,259 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # user data directories
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_DATA_HOME="$HOME/.local/share"
 
-is_os() {
-  [[ "$1" == "$(awk -F= '/^ID=/{print $2}' /etc/os-release)" ]]
-}
+# shellcheck disable=SC1090
+source "${HOME}"/helper.installrc
 
-file_exists() {
-  [[ -f $1 ]]
-}
-
-script_exists() {
-  [[ -s $1 ]]
-}
-
-prog_exists() {
-  [[ -x $(command -v "$1") ]]
-}
-
-os_install() {
-  prog=$1
-  echo "installing $prog..."
-  is_os ubuntu && sudo apt install -y "$prog" ||
-    is_os amzn && sudo yum install -y "$prog" ||
-    is_os manjaro && sudo pacman -Sy "$prog" --noconfirm
-}
-
-install_zplug() {
-  script_exists "$ZPLUG_HOME"/init.zsh && return
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-}
-
-install_ruby() {
-  prog_exists ruby && return
-  os_install ruby
-}
-
-install_conda() {
-  prog_exists conda && return
-
-  echo "installing conda prereqs..."
-
-  is_os ubuntu && sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 ||
-    is_os amzn && sudo yum install libXcomposite libXcursor libXi libXtst libXrandr alsa-lib mesa-libEGL libXdamage mesa-libGL libXScrnSaver ||
-    is_os manjaro && sudo pacman -Sy libxau libxi libxss libxtst libxcursor libxcomposite libxdamage libxfixes libxrandr libxrender mesa-libgl alsa-lib libglvnd
-
-  echo "installing anaconda..."
-  wget -q "https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh"
-  bash Anaconda3-2020.11-Linux-x86_64.sh
-
-  echo "updating conda config..."
-  conda config --add channels anaconda
-  conda config --add channels conda-forge
-  conda config --set channel_priority false
-  conda config --set pip_interop_enabled True
-  conda install argcomplete
-}
-
-install_pip() {
-  prog_exists pip3 && return
-  os_install python3-pip3 ||
-    curl https://bootstrap.pypa.io/get-pip.py -o \
-      "$HOME"/get-pip.py && python3 "$HOME"/get-pip.py
-}
-
-# shellcheck disable=SC2016
-install_brew() {
-  prog_exists brew && return
-  echo "installing Homebrew..." &&
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" &&
-    echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>"$HOME"/.zprofile &&
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-}
-
-install_brew_patchelf() {
-  brew install patchelf
-}
-
-install_git() {
-  prog_exists git && prog_exists git-subrepo && return
-  echo "installing git..."
-  os_install git &&
-    brew install git-subrepo &&
-    fpath+="/home/linuxbrew/.linuxbrew/etc/bash_completion.d"
-}
-
-install_gcc() {
-  prog_exists gcc && return
-  os_install gcc ||
-    brew install gcc
-}
-
-install_neovim() {
-  prog_exists nvim && return
-  is_os manjaro && os_install neovim-nightly-bin
-  is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
-  prog_exists nvim || brew install --HEAD neovim
-
-  # install the addons
-  prog_exists python3 && python -m pip install pynvim
-  prog_exists ruby && gem install neovim
-  prog_exists pipx && pipx install cmake-language-server
-  prog_exists yarn && (
-    yarn global add \
-      bash-language-server \
-      diagnostic-languageserver \
-      dockerfile-language-server-nodejs \
-      graphql-language-service-cli graphql typescript \
-      intelephense \
-      neovim \
-      pyright \
-      sql-language-server \
-      typescript-language-server \
-      vim-language-server \
-      yaml-language-server \
-      vscode-langservers-extracted #css, html, json
-  )
-  os_install lua-language-server
-  os_install rust-analyzer
-  git clone https://github.com/wbthomason/packer.nvim \
-    "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/packer/start/packer.nvim
-}
-
-install_nvm() {
-  export NVM_DIR="$HOME/.nvm"
-  script_exists "$NVM_DIR"/nvm.sh && return
-  rm -rf "$NVM_DIR" && git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
-  # Load nvm
-  script_exists "$NVM_DIR"/nvm.sh && \. "$NVM_DIR/nvm.sh"
-  # Load nvm bash completion
-  script_exists "$NVM_DIR"/bash_completion && \. "$NVM_DIR/bash_completion"
-  prog_exists node && return
-  echo "installing node..." &&
-    nvm install node
-}
-
-install_docker() {
-  prog_exists docker && return
-  echo "installing docker..."
-  is_os ubuntu && sudo apt install -y docker.io ||
-    is_os amzn && sudo yum install -y docker ||
-    is_os manjaro && sudo pacman -Sy docker --noconfirm
-  echo "install ecr-cred-helper"
-  brew install docker-credential-helper-ecr
-  sudo usermod -aG docker "$USER"
-  sudo systemctl enable docker
-  sudo systemctl start docker
-}
-
-install_dnsutils() {
-  prog_exists dig && return
-  echo "installing dnsutils..."
-  os_install dnsutils ||
-    os_install bind-utils
-}
-
-# shellcheck disable=SC2015
-install_fasd() {
-  if [[ ! -x "$(command -v fasd)" ]]; then
-    echo "installing fasd..."
-    is_os ubuntu && sh -c 'sudo add-apt-repository -y ppa:aacebedo/fasd && sudo apt-get update && sudo apt-get install -y fasd' ||
-      is_os manjaro && sudo pacman -Sy fasd --noconfirm ||
-      brew install fasd
-  fi
-}
-
-install_htop() {
-  prog_exists htop && return
-  os_install htop
-}
-
-install_fzf() {
-  prog_exists fzf && return
-  os_install fzf ||
-    brew install fzf
-  # shellcheck disable=SC1090
-  [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-}
-
-install_expect() {
-  prog_exists expect && return
-  os_install expect
-}
+# install plugin manager
+install_sheldon
 
 # Install the basic software
-install_ruby
-install_pip
 install_brew
 install_git
-install_gcc
-install_nvm
-install_docker
 install_dnsutils
-install_htop
-install_fzf
-install_expect
+install_pip
+install_pipx
+
+# Install configurable software
+[ -z ${INSTALL_RUBY} ] || install_native ruby
+[ -z ${INSTALL_GCC} ] || install_gcc
+[ -z ${INSTALL_NODE} ] || install_nvm
+[ -z ${INSTALL_DOCKER} ] || install_docker
+[ -z ${INSTALL_FZF} ] || install_fzf
+[ -z ${INSTALL_FZF} ] || export ENHANCD_FILTER=fzf-tmux
+[ -z ${INSTALL_PASS} ] || install_pass
+[ -z ${INSTALL_KEYCHAIN} ] || install_keychain
+
+# utils
+install_native expect
+install_native shellcheck
+install_native htop
+install_tmux
+install_neovim
+install_nvim_plugins
 
 # Rust based utils
-install_rustup() {
-  prog_exists rustup && return
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-}
-install_rustup
+[ -z ${INSTALL_RUST} ] || install_rustup
+[ -z ${INSTALL_RUSTCLIS} ] || install_rust_clis
 
-install_rust_clis() {
-  # du replacement
-  prog_exists dust || cargo install du-dust
-  # ps replacement
-  prog_exists procs || cargo install procs
-  # top replacement
-  prog_exists ytop || cargo install ytop
-  # grep replacement
-  prog_exists rg || cargo install ripgrep
-  # regex creation via test samples util
-  prog_exists grex || cargo install grex
-  # man alternative
-  prog_exists tldr || (cargo install tealdeer &&
-    tldr --update 1>/dev/null)
-  # ls replacement
-  prog_exists exa || cargo install exa
-  # s/sed/sd/g
-  prog_exists sd || cargo install sd
-  # cat replacement
-  prog_exists bat || cargo install bat
-  # git-diff pager
-  prog_exists delta || cargo install git-delta
-  # find replacement
-  prog_exists fd || cargo install fd-find
-  # cargo updates
-  prog_exists cargo-install-update || cargo install cargo-update
-}
-install_rust_clis
-
-# shellcheck disable=SC2139
-setup_rust_clis() {
-
-  mkdir -p ~/.zfunc
-
-  curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o ~/.zfunc/_fd
-  chmod +x ~/.zfunc/_fd
-
-  alias cat='bat --paging=never -A'
-
-  EXA_CMD='exa --icons --git -F'
-  alias ls="$EXA_CMD"
-  alias ll="$EXA_CMD -l"
-  alias la="$EXA_CMD -a"
-  alias lla="$EXA_CMD -la --sort=modified"
-  alias lt="$EXA_CMD --tree"
-  alias lg="$EXA_CMD --git-ignore"
-
-  curl -fsSL https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa -o ~/.zfunc/_exa
-  chmod +x ~/.zfunc/_exa
-  ln -sf ~/.zfunc/_exa ~/.zfunc/_ls
-}
+# Fonts
+install_nerdfont "FiraCode"

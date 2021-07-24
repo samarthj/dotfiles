@@ -53,7 +53,10 @@ declare -a config_folders=(
   "alacritty"
   "tmux"
   "bat"
-  "sheldon"
+)
+
+declare -a config_files=(
+  "sheldon/plugins.toml"
 )
 
 for conf in "${config_folders[@]}"; do
@@ -64,6 +67,16 @@ for conf in "${config_folders[@]}"; do
   fi
   mkdir -p "$dir"
   replace_dir "${frm}" "${dir}"
+done
+
+for conf in "${config_files[@]}"; do
+  dir="${config_dir}/${conf%/*}"
+  frm="$(pwd)/${SCRIPT_DIR##./}/${conf}"
+  if [ ! -f "$frm" ]; then
+    continue
+  fi
+  mkdir -p "$dir"
+  replace_file "${frm##*/}" "${dir}" "${frm%/*}"
 done
 
 echo "Done! Reloading..."

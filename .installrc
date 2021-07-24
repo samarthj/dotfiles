@@ -1,44 +1,40 @@
 #!/usr/bin/env bash
 
-# user data directories
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_DATA_HOME="$HOME/.local/share"
-
 # shellcheck disable=SC1090
 source "${HOME}"/helper.installrc
 
 # install plugin manager
 install_sheldon
+command -v apt && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
 
 # Install the basic software
 install_brew
+fpath+="$HOMEBREW_PREFIX/etc/bash_completion.d"
 install_git
 install_dnsutils
 install_pip
 install_pipx
 
 # Install configurable software
-[ -z ${INSTALL_RUBY} ] || install_native ruby
-[ -z ${INSTALL_GCC} ] || install_gcc
-[ -z ${INSTALL_NODE} ] || install_nvm
-[ -z ${INSTALL_DOCKER} ] || install_docker
-[ -z ${INSTALL_FZF} ] || install_fzf
-[ -z ${INSTALL_FZF} ] || export ENHANCD_FILTER=fzf-tmux
-[ -z ${INSTALL_PASS} ] || install_pass
-[ -z ${INSTALL_KEYCHAIN} ] || install_keychain
+[ -z "${INSTALL_RUST}" ] || install_rustup
+[ -z "${INSTALL_RUSTCLIS}" ] || install_rust_clis
+[ -z "${INSTALL_RUBY}" ] || os_install ruby
+[ -z "${INSTALL_GCC}" ] || install_gcc
+[ -z "${INSTALL_NODE}" ] || install_nvm
+[ -z "${INSTALL_DOCKER}" ] || install_docker
+[ -z "${INSTALL_FZF}" ] || install_fzf
+[ -z "${INSTALL_FZF}" ] || export ENHANCD_FILTER=fzf-tmux
+[ -z "${INSTALL_PASS}" ] || install_pass
+[ -z "${INSTALL_KEYCHAIN}" ] || install_keychain
 
 # utils
-install_native expect
-install_native shellcheck
-install_native htop
+os_install expect
+os_install shellcheck
+os_install htop
+os_install jq
 install_tmux
 install_neovim
 install_nvim_plugins
-
-# Rust based utils
-[ -z ${INSTALL_RUST} ] || install_rustup
-[ -z ${INSTALL_RUSTCLIS} ] || install_rust_clis
 
 # Fonts
 install_nerdfont "FiraCode"

@@ -18,43 +18,42 @@ prog_exists() {
 
 os_install() {
   prog=$1
+  prog_exists "$prog" && return
+  echo "-------------------"
   echo "installing $prog..."
-  is_os ubuntu && sudo apt install -y "$prog" ||
-    is_os debian && sudo apt install -y "$prog" ||
-    is_os amzn && sudo yum install -y "$prog" ||
-    is_os manjaro && sudo pacman -Sy "$prog" --noconfirm
-}
-
-install_native() {
-  prog_exists "$1" && return
-  echo "installing $1..."
-  os_install "$1"
+  (is_os ubuntu && sudo apt-get install -y "$prog") ||
+    (is_os debian && sudo apt-get install -y "$prog") ||
+    (is_os amzn && sudo yum install -y "$prog") ||
+    (is_os manjaro && sudo pacman -Sy "$prog" --noconfirm)
 }
 
 install_nerdfont() {
-  mkdir -p ${XDG_DATA_HOME}/fonts/
+  mkdir -p "${XDG_DATA_HOME}"/fonts/
   font="$1"
+  echo "-------------------"
+  echo "installing font $font..."
   (
-    cd ${XDG_DATA_HOME}/fonts/
+    cd "${XDG_DATA_HOME}"/fonts/ || exit 1
     latest=$(
       curl -sSL1 "https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest" |
         grep -oP "https://.*${font}.zip" |
         head -n1
     )
-    wget -N "${latest}"
-    unzip -uo "${font}.zip" -x "*Windows*" "*.ttf"
-    fc-cache -vf ${XDG_DATA_HOME}/fonts/
+    wget -qN "${latest}"
+    unzip -quo "${font}.zip" -x "*Windows*" "*.ttf"
+    fc-cache -f "${XDG_DATA_HOME}"/fonts/
   )
 }
 
 install_zplug() {
+  echo "-------------------"
   script_exists "$ZPLUG_HOME"/init.zsh && return
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 }
 
 install_conda() {
   prog_exists conda && return
-
+  echo "-------------------"
   echo "installing conda prereqs..."
 
   is_os ubuntu && sudo apt-get install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 ||
@@ -89,22 +88,22 @@ install_pipx() {
 # shellcheck disable=SC2016
 install_brew() {
   prog_exists brew && return
+  echo "-------------------"
   echo "installing Homebrew..." &&
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" &&
-    echo 'eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)' >>"$HOME"/.zprofile &&
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+    echo 'eval $($HOMEBREW_PREFIX/bin/brew shellenv)' >>"$HOME"/.zprofile &&
+    eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
 }
 
 install_brew_patchelf() {
+  echo "-------------------"
   brew install patchelf
 }
 
 install_git() {
-  prog_exists git && prog_exists git-subrepo && return
-  echo "installing git..."
-  os_install git &&
-    brew install git-subrepo &&
-    fpath+="/home/linuxbrew/.linuxbrew/etc/bash_completion.d"
+  prog_exists git && return
+  os_install git ||
+    brew install git
 }
 
 install_gcc() {
@@ -115,6 +114,8 @@ install_gcc() {
 
 install_neovim() {
   prog_exists nvim && return
+  echo "-------------------"
+  echo "installing neovim..."
   # latest="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
   # wget "$latest"
   # tar -xvf -C "${HOME}/.local/" "nvim-linux64.tar.gz"
@@ -123,55 +124,90 @@ install_neovim() {
   prog_exists nvim || brew install --HEAD neovim
 
   # install the addons
-  prog_exists python3 && python -m pip install pynvim
+  prog_exists python3 && python3 -m pip install pynvim
   prog_exists ruby && gem install neovim
   prog_exists pipx && pipx install cmake-language-server
   prog_exists yarn && yarn global add neovim
 }
 
 install_nvim_plugins() {
-  prog_exists yarn && (
-    yarn global add \
-      bash-language-server \
-      diagnostic-languageserver \
-      dockerfile-language-server-nodejs \
-      graphql-language-service-cli graphql typescript \
-      intelephense \
-      neovim \
-      pyright \
-      sql-language-server \
-      typescript-language-server \
-      vim-language-server \
-      yaml-language-server \
-      vscode-langservers-extracted #css, html, json
+  lang_servers=()
+  prog_exists bash-language-server || lang_servers+=("$_")
+  prog_exists diagnostic-languageserver || lang_servers+=("$_")
+  prog_exists docker-langserver || lang_servers+=(dockerfile-language-server-nodejs)
+  # prog_exists graphql-lsp || lang_servers+=(graphql-language-service-cli graphql)
+  prog_exists neovim-node-host || lang_servers+=(neovim)
+  prog_exists pyright || lang_servers+=("$_")
+  prog_exists typescript-language-server || lang_servers+=("$_" typescript)
+  prog_exists vim-language-server || lang_servers+=("$_")
+  prog_exists yaml-language-server || lang_servers+=("$_")
+  prog_exists vscode-css-language-server || lang_servers+=(vscode-langservers-extracted)
+  prog_exists vscode-html-language-server || lang_servers+=(vscode-langservers-extracted)
+  prog_exists vscode-json-language-server || lang_servers+=(vscode-langservers-extracted)
+  # sql-language-server
+  if [ ${#lang_servers[@]} -ne 0 ]; then
+    prog_exists yarn && (
+      echo "-------------------"
+      echo "installing neovim plugins..."
+      yarn global add "${lang_servers[@]}"
+    )
+  fi
+  prog_exists lua-language-server || prog_exists lua-lsp || (
+    if is_os manjaro; then
+      os_install lua-language-server
+    else
+      prog_exists luarocks || os_install luarocks
+      # prog_exists lua-lsp || luarocks install --server=http://luarocks.org/dev lua-lsp
+      # cd "${HOME}"/ws || exit 1
+      # [ -d "${HOME}"/ws/lua-language-server ] ||
+      #   git clone https://github.com/sumneko/lua-language-server
+      # cd lua-language-server || exit 1
+      # git pull
+      # prog_exists ninja || os_install ninja-build
+      # git submodule update --init --recursive
+      # cd 3rd/luamake || exit 1
+      # compile/install.sh
+      # cd ../.. || exit 1
+      # ./3rd/luamake/luamake rebuild
+    fi
   )
-  os_install lua-language-server
-  os_install rust-analyzer
-  git clone https://github.com/wbthomason/packer.nvim \
-    "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/pack/packer/start/packer.nvim
+  rustup component list --installed | grep -q rust-analyzer ||
+    rustup +nightly component add rust-analyzer-preview
+  [ -d "${XDG_DATA_HOME}"/nvim/site/pack/packer/start/packer.nvim ] ||
+    git clone https://github.com/wbthomason/packer.nvim \
+      "${XDG_DATA_HOME}"/nvim/site/pack/packer/start/packer.nvim
 }
 
 install_nvm() {
   export NVM_DIR="$HOME/.nvm"
   script_exists "$NVM_DIR"/nvm.sh && return
+  echo "-------------------"
+  echo "installing nvm..."
   rm -rf "$NVM_DIR" && git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
   # Load nvm
-  script_exists "$NVM_DIR"/nvm.sh && \. "$NVM_DIR/nvm.sh"
+  script_exists "$NVM_DIR"/nvm.sh && "$NVM_DIR/nvm.sh"
   # Load nvm bash completion
-  script_exists "$NVM_DIR"/bash_completion && \. "$NVM_DIR/bash_completion"
+  script_exists "$NVM_DIR"/bash_completion && "$NVM_DIR/bash_completion"
   prog_exists node && return
+  echo "-------------------"
   echo "installing node..." &&
     nvm install node
   npm install --global yarn
 }
 
+install_tmux() {
+  prog_exists tmux && return
+  os_install tmux
+}
+
 install_docker() {
   prog_exists docker && return
+  echo "-------------------"
   echo "installing docker..."
-  is_os ubuntu && sudo apt install -y docker.io ||
-    is_os debian && sudo apt install -y docker ||
-    is_os amzn && sudo yum install -y docker ||
-    is_os manjaro && sudo pacman -Sy docker --noconfirm
+  (is_os ubuntu && sudo apt-get install -y docker.io) ||
+    (is_os debian && sudo apt-get install -y docker) ||
+    (is_os amzn && sudo yum install -y docker) ||
+    (is_os manjaro && sudo pacman -Sy docker --noconfirm)
   echo "install ecr-cred-helper..."
   brew install docker-credential-helper-ecr
   echo "configuring docker..."
@@ -182,7 +218,6 @@ install_docker() {
 
 install_dnsutils() {
   prog_exists dig && return
-  echo "installing dnsutils..."
   os_install dnsutils ||
     os_install bind-utils
 }
@@ -190,6 +225,7 @@ install_dnsutils() {
 # shellcheck disable=SC2015
 install_fasd() {
   if [[ ! -x "$(command -v fasd)" ]]; then
+    echo "-------------------"
     echo "installing fasd..."
     is_os ubuntu && sh -c 'sudo add-apt-repository -y ppa:aacebedo/fasd && sudo apt-get update && sudo apt-get install -y fasd' ||
       is_os manjaro && sudo pacman -Sy fasd --noconfirm ||
@@ -199,59 +235,75 @@ install_fasd() {
 
 install_fzf() {
   prog_exists fzf && return
-  echo "installing fzf..."
   os_install fzf ||
     brew install fzf
   # shellcheck disable=SC1090
-  [ -f ${HOME}/.fzf.zsh ] && source ${HOME}/.fzf.zsh
+  [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
 }
 
 install_sheldon() {
   prog_exists sheldon && return
+  echo "-------------------"
+  echo "installing sheldon..."
   curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
-    bash -s -- --repo rossmacarthur/sheldon --to ${HOME}/.local/bin
+    bash -s -- --repo rossmacarthur/sheldon --to "${HOME}/.local/bin"
 }
 
 install_rustup() {
   prog_exists rustup && return
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  echo "-------------------"
+  echo "installing rustup..."
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  rustup default nightly
 }
 
 install_rust_clis() {
+  command -v apt &&
+    sudo apt-get install -y librust-libz-sys-dev >/dev/null
+  command -v pamac && sudo pamac -Sy zlib >/dev/null
+  install_cli=()
   # du replacement
-  prog_exists dust || cargo install du-dust
+  prog_exists dust || install_cli+=(du-dust)
   # ps replacement
-  prog_exists procs || cargo install procs
+  prog_exists procs || install_cli+=(procs)
   # top replacement
-  prog_exists ytop || cargo install ytop
+  prog_exists ytop || install_cli+=(ytop)
   # grep replacement
-  prog_exists rg || cargo install ripgrep
+  prog_exists rg || install_cli+=(ripgrep)
   # regex creation via test samples util
-  prog_exists grex || cargo install grex
+  prog_exists grex || install_cli+=(grex)
   # man alternative
-  prog_exists tldr || (cargo install tealdeer &&
-    tldr --update 1>/dev/null)
+  prog_exists tldr || install_cli+=(tealdeer)
   # ls replacement
-  prog_exists exa || cargo install exa
+  prog_exists exa || install_cli+=(exa)
   # s/sed/sd/g
-  prog_exists sd || cargo install sd
+  prog_exists sd || install_cli+=(sd)
   # cat replacement
-  prog_exists bat || cargo install bat
+  prog_exists bat || install_cli+=(bat)
   # git-diff pager
-  prog_exists delta || cargo install git-delta
+  prog_exists delta || install_cli+=(git-delta)
   # find replacement
-  prog_exists fd || cargo install fd-find
+  prog_exists fd || install_cli+=(fd-find)
   # cargo updates
-  prog_exists cargo-install-update || cargo install cargo-update
+  prog_exists cargo-install-update || install_cli+=(cargo-update)
+  # install progs
+  if [ ${#install_cli[@]} -ne 0 ]; then
+    echo "-------------------"
+    echo "installing rust_clis ${install_cli[*]}..."
+    cargo install "${install_cli[@]}"
+    tldr --update
+  fi
 }
 
 # shellcheck disable=SC2139
 setup_rust_clis() {
+  echo "-------------------"
+  echo "setup rust_clis..."
 
-  mkdir -p ${HOME}/.zfunc
+  mkdir -p "${HOME}/.zfunc"
 
-  curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o ${HOME}/.zfunc/_fd
-  chmod +x ${HOME}/.zfunc/_fd
+  curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o "${HOME}/.zfunc/_fd"
+  chmod +x "${HOME}/.zfunc/_fd"
 
   alias cat='bat --paging=never -A'
 
@@ -263,21 +315,19 @@ setup_rust_clis() {
   alias lt="$EXA_CMD --tree"
   alias lg="$EXA_CMD --git-ignore"
 
-  curl -fsSL https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa -o ${HOME}/.zfunc/_exa
-  chmod +x ${HOME}/.zfunc/_exa
-  ln -sf ${HOME}/.zfunc/_exa ${HOME}/.zfunc/_ls
+  curl -fsSL https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa -o "${HOME}/.zfunc/_exa"
+  chmod +x "${HOME}/.zfunc/_exa"
+  ln -sf "${HOME}/.zfunc/_exa" "${HOME}/.zfunc/_ls"
 }
 
 install_pass() {
   prog_exists pass && return
-  echo "installing pass..."
   os_install pass ||
     brew install pass
 }
 
 install_keychain() {
   prog_exists keychain && return
-  echo "installing keychain..."
   os_install keychain ||
     brew install keychain
 }

@@ -132,4 +132,4 @@ xontrib load whole_word_jumping
 # XONTRIB CONFIG END
 
 
-$PATH.append("/home/linuxbrew/.linuxbrew/bin")
+$PATH.append("$HOMEBREW_PREFIX/bin")

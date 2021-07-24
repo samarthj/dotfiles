@@ -27,7 +27,11 @@ nvim() {
     echo "Editing readonly file..."
     sudo -e "$@"
   else
-    /usr/bin/nvim "$@"
+    if [ -x "${HOMEBREW_PREFIX}/bin/nvim" ]; then
+      "${HOMEBREW_PREFIX}/bin/nvim" "$@"
+    elif [ -x /usr/bin/nvim ]; then
+      /usr/bin/nvim "$@"
+    fi
   fi
 }
 
@@ -87,7 +91,7 @@ brew-upgrade() {
 update-all-the-things() {
   echo "=======================================| Update pkgmgr |=============================================="
   command -v pacman && sudo pacman -Sy && sudo powerpill -Su && paru -Su
-  command -v apt && aguu
+  command -v apt && sudo apt-get update && sudo apt-get upgrade
   echo "=======================================| Update flatpak |============================================="
   command -v flatpak && sudo flatpak update -y
   echo "=======================================| Update linuxbrew |==========================================="
@@ -98,20 +102,21 @@ update-all-the-things() {
   command -v pipx && pipx upgrade-all
   echo "=======================================| Update cargo |================================================"
   command -v cargo-install-update && cargo install-update -a
-  echo "=======================================| Update npm |================================================"
+  echo "=======================================| Update node |================================================"
   command -v npm && npm update -g --all
+  command -v yarn && yarn global upgrade
   echo "=======================================| Update plex |================================================"
   command -v update-plex-plugins && update-plex-plugins
   echo "=======================================| Update qb-web |================================================"
   command -v update-qb-web && update-qb-web
   echo "=======================================| fwupdmgr update |============================================"
   command -v fwupdmgr-upgrade && fwupmgr-upgrade
-  echo "=======================================| Vim plugins |================================================"
+  echo "=======================================| nvim plugins |================================================"
   command -v nvim-plugins && nvim-plugins
   echo "=======================================| Finished Updates |==========================================="
 }
 
-alias yaml2js="python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"
+alias yaml2js="python3 -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"
 
 # signin for 1password
 # shellcheck disable=SC2154
@@ -144,9 +149,7 @@ op_get_totp() {
   [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
 }
 
-unalias fd
 export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
   --ignore-file ~/ws/my_dotfiles/main/.fdignore"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 alias dc-pup='docker-compose pull && docker-compose up --force-recreate -d && docker image prune -f'
-alias dc-up='docker-compose up -d'

@@ -10,6 +10,8 @@ setopt appendhistory autocd extendedglob notify
 
 source $HOME/.env
 
+[ -f $HOME/preinit.zsh ] && source $HOME/preinit.zsh
+
 zmodload zsh/mapfile
 
 [ -f $HOME/personal.pathrc ] && source $HOME/personal.pathrc
@@ -18,7 +20,9 @@ echo "paths loaded ..."
 # ssh
 export SSH_KEY_PATH="~/.ssh/id_rsa"
 zstyle :omz:plugins:ssh-agent agent-forwarding on
-zstyle :omz:plugins:ssh-agent identities id_rsa aur id_ed25519
+[ -f $HOME/.ssh/id_rsa ] && zstyle :omz:plugins:ssh-agent identities id_rsa
+[ -f $HOME/.ssh/aur ] && zstyle :omz:plugins:ssh-agent identities aur
+[ -f $HOME/.ssh/id_ed25519 ] && zstyle :omz:plugins:ssh-agent identities id_ed25519
 
 # sheldon setup
 source $HOME/sheldon.zsh
@@ -42,7 +46,7 @@ echo "aliases loaded ..."
 # export TERM=konsole-direct
 export COLORTERM=truecolor
 
-fpath=(~/.zsh/completion ~/.zfunc $fpath /home/linuxbrew/.linuxbrew/share/zsh/site-functions)
+fpath=(~/.zsh/completion ~/.zfunc $fpath $HOMEBREW_PREFIX/share/zsh/site-functions)
 
 autoload bashcompinit && bashcompinit
 complete -C 'aws_completer' aws

@@ -4,7 +4,7 @@
 source "${HOME}"/.installrc
 
 conditionally_add() {
-  plugs = $1
+  plugs=$1
   for p in ${plugs[@]}; do
     prog_exists $p && plugins+=$1
   done

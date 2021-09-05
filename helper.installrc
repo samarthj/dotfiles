@@ -325,18 +325,34 @@ install_rust_clis() {
   fi
 }
 
-# shellcheck disable=SC2139
+install_completion() {
+  url="$1"
+  file="$2"
+  folder="${HOME}/.zfunc"
+
+  mkdir -p "${folder}"
+
+  if [ ! -f "${folder}/${file}" ]; then
+    curl -fsSL "${url}" -o "${folder}/${file}"
+    chmod +x "${folder}/${file}"
+  fi
+}
+
 setup_rust_clis() {
   echo "-------------------"
   echo "setup rust_clis..."
 
-  mkdir -p "${HOME}/.zfunc"
-
-  curl -fsSL https://github.com/sharkdp/fd/raw/master/contrib/completion/_fd -o "${HOME}/.zfunc/_fd"
-  chmod +x "${HOME}/.zfunc/_fd"
+  install_completion "https://raw.githubusercontent.com/BurntSushi/ripgrep/master/complete/_rg" "_rg"
+  install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/complete/_fd" "_fd"
 
   alias cat='bat --paging=never -A'
 
+  setup_exa
+  setup_delta
+}
+
+# shellcheck disable=SC2139
+setup_exa() {
   EXA_CMD='exa --icons --git -F'
   alias ls="$EXA_CMD"
   alias ll="$EXA_CMD -l"
@@ -345,9 +361,24 @@ setup_rust_clis() {
   alias lt="$EXA_CMD --tree"
   alias lg="$EXA_CMD --git-ignore"
 
-  curl -fsSL https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa -o "${HOME}/.zfunc/_exa"
-  chmod +x "${HOME}/.zfunc/_exa"
+  install_completion "https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa" "_exa"
   ln -sf "${HOME}/.zfunc/_exa" "${HOME}/.zfunc/_ls"
+}
+
+setup_delta() {
+  if prog_exists delta && [[ $(git config --global pager.diff) != "delta" ]]; then
+    git config --global pager.diff delta
+    git config --global pager.log delta
+    git config --global pager.reflog delta
+    git config --global pager.show delta
+
+    git config --global delta.plus-style "syntax #012800"
+    git config --global delta.minus-style "syntax #340001"
+    git config --global delta.syntax-theme "Monokai Extended"
+    git config --global delta.navigate true
+
+    git config --global interactive.diffFilter "delta --color-only"
+  fi
 }
 
 install_pass() {

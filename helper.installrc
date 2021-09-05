@@ -13,7 +13,7 @@ script_exists() {
 }
 
 prog_exists() {
-  [[ -x $(command -v "$1") ]]
+  command -v "$1" 1>/dev/null
 }
 
 os_install() {
@@ -25,6 +25,15 @@ os_install() {
     (is_os debian && sudo apt-get install -y "$prog") ||
     (is_os amzn && sudo yum install -y "$prog") ||
     (is_os manjaro && sudo pacman -Sy "$prog" --noconfirm)
+}
+
+install_ssl() {
+  prog_exists "openssl" && return
+  echo "-------------------"
+  echo "installing openssl..."
+  (is_os ubuntu && sudo apt-get install -y libssl-dev) ||
+    (is_os debian && sudo apt-get install -y libssl-dev) ||
+    (is_os manjaro && sudo pacman -Sy openssl --noconfirm)
 }
 
 install_nerdfont() {
@@ -85,14 +94,28 @@ install_pipx() {
   eval "$(register-python-argcomplete pipx)"
 }
 
+setup_homebrew_prefix() {
+  if [ -z "$HOMEBREW_PREFIX" ]; then
+    if [ -d "$HOME/.linuxbrew" ]; then
+      HOMEBREW_PREFIX="$HOME/.linuxbrew"
+    elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
+      HOMEBREW_PREFIX="$HOME/.linuxbrew"
+    fi
+  fi
+}
+
 # shellcheck disable=SC2016
 install_brew() {
-  prog_exists brew && return
+  setup_homebrew_prefix
+  prog_exists brew && eval "$($HOMEBREW_PREFIX/bin/brew shellenv)" && return
   echo "-------------------"
   echo "installing Homebrew..." &&
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)" &&
-    echo 'eval $($HOMEBREW_PREFIX/bin/brew shellenv)' >>"$HOME"/.zprofile &&
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+  setup_homebrew_prefix
+  if [ -n "$HOMEBREW_PREFIX" ]; then
+    # echo "eval \$($HOMEBREW_PREFIX/bin/brew shellenv)" >>"$HOME"/.zprofile
     eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
+  fi
 }
 
 install_brew_patchelf() {
@@ -126,7 +149,8 @@ install_neovim() {
   # install the addons
   prog_exists python3 && python3 -m pip install pynvim
   prog_exists ruby && gem install neovim
-  prog_exists pipx && pipx install cmake-language-server
+  # TODO: fix install, failing with - no write permissions
+  # prog_exists pipx && pipx install cmake-language-server
   prog_exists yarn && yarn global add neovim
 }
 
@@ -224,7 +248,7 @@ install_dnsutils() {
 
 # shellcheck disable=SC2015
 install_fasd() {
-  if [[ ! -x "$(command -v fasd)" ]]; then
+  if [[ ! $(prog_exists fasd) ]]; then
     echo "-------------------"
     echo "installing fasd..."
     is_os ubuntu && sh -c 'sudo add-apt-repository -y ppa:aacebedo/fasd && sudo apt-get update && sudo apt-get install -y fasd' ||
@@ -258,9 +282,9 @@ install_rustup() {
 }
 
 install_rust_clis() {
-  command -v apt &&
+  prog_exists apt &&
     sudo apt-get install -y librust-libz-sys-dev >/dev/null
-  command -v pamac && sudo pamac -Sy zlib >/dev/null
+  prog_exists pacman && sudo pacman -Sy zlib >/dev/null
   install_cli=()
   # du replacement
   prog_exists dust || install_cli+=(du-dust)
@@ -272,8 +296,6 @@ install_rust_clis() {
   prog_exists rg || install_cli+=(ripgrep)
   # regex creation via test samples util
   prog_exists grex || install_cli+=(grex)
-  # man alternative
-  prog_exists tldr || install_cli+=(tealdeer)
   # ls replacement
   prog_exists exa || install_cli+=(exa)
   # s/sed/sd/g
@@ -284,6 +306,14 @@ install_rust_clis() {
   prog_exists delta || install_cli+=(git-delta)
   # find replacement
   prog_exists fd || install_cli+=(fd-find)
+  # TODO: fix install, failing with - Could not install openssl-sys
+  if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
+    openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
+    openssl_ver="$(openssl version | cut -d' ' -f2)"
+    export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
+  fi
+  # man alternative
+  prog_exists tldr || install_cli+=(tealdeer)
   # cargo updates
   prog_exists cargo-install-update || install_cli+=(cargo-update)
   # install progs
@@ -291,7 +321,7 @@ install_rust_clis() {
     echo "-------------------"
     echo "installing rust_clis ${install_cli[*]}..."
     cargo install "${install_cli[@]}"
-    tldr --update
+    prog_exists tldr && tldr --update
   fi
 }
 

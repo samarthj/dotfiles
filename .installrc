@@ -3,6 +3,8 @@
 # shellcheck disable=SC1090
 source "${HOME}"/helper.installrc
 
+install_ssl
+
 # install plugin manager
 install_sheldon
 command -v apt && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
@@ -15,6 +17,18 @@ install_dnsutils
 install_pip
 install_pipx
 
+# utils
+os_install expect
+os_install shellcheck
+os_install htop
+os_install jq
+install_tmux
+install_neovim
+install_nvim_plugins
+
+# Fonts
+[ -z "${INSTALL_NERDFONT}" ] || install_nerdfont "${INSTALL_NERDFONT}"
+
 # Install configurable software
 [ -z "${INSTALL_RUST}" ] || install_rustup
 [ -z "${INSTALL_RUSTCLIS}" ] || install_rust_clis
@@ -26,15 +40,3 @@ install_pipx
 [ -z "${INSTALL_FZF}" ] || export ENHANCD_FILTER=fzf-tmux
 [ -z "${INSTALL_PASS}" ] || install_pass
 [ -z "${INSTALL_KEYCHAIN}" ] || install_keychain
-
-# utils
-os_install expect
-os_install shellcheck
-os_install htop
-os_install jq
-install_tmux
-install_neovim
-install_nvim_plugins
-
-# Fonts
-install_nerdfont "FiraCode"

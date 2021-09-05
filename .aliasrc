@@ -89,31 +89,62 @@ brew-upgrade() {
 
 #shellcheck disable=SC2046
 update-all-the-things() {
-  echo "=======================================| Update pkgmgr |=============================================="
-  command -v pacman && sudo pacman -Sy && sudo powerpill -Su && paru -Su
-  command -v apt && sudo apt-get update && sudo apt-get upgrade
-  echo "=======================================| Update flatpak |============================================="
-  command -v flatpak && sudo flatpak update -y
-  echo "=======================================| Update linuxbrew |==========================================="
-  command -v brew && brew-upgrade
-  echo "=======================================| Update pip3 |================================================"
-  command -v pip3 && pip3-upgrade
-  echo "=======================================| Update pipx |================================================"
-  command -v pipx && pipx upgrade-all
-  echo "=======================================| Update cargo |================================================"
-  command -v cargo-install-update && cargo install-update -a
-  echo "=======================================| Update node |================================================"
-  command -v npm && npm update -g --all
-  command -v yarn && yarn global upgrade
-  echo "=======================================| Update plex |================================================"
-  command -v update-plex-plugins && update-plex-plugins
-  echo "=======================================| Update qb-web |================================================"
-  command -v update-qb-web && update-qb-web
-  echo "=======================================| fwupdmgr update |============================================"
-  command -v fwupdmgr-upgrade && fwupmgr-upgrade
-  echo "=======================================| nvim plugins |================================================"
-  command -v nvim-plugins && nvim-plugins
-  echo "=======================================| Finished Updates |==========================================="
+  prog_exists pacman && prog_exists pacman && prog_exists pacman &&
+    echo "---------------------------" &&
+    echo "=====| Update pkgmgr |=====" &&
+    sudo pacman -Sy && sudo powerpill -Su && paru -Su
+
+  prog_exists apt &&
+    echo "---------------------------" &&
+    echo "=====| Update pkgmgr |=====" &&
+    sudo apt-get update && sudo apt-get upgrade
+
+  prog_exists flatpak &&
+    echo "---------------------------" &&
+    echo "=====| Update flatpak |====" &&
+    sudo flatpak update -y
+
+  prog_exists brew &&
+    echo "---------------------------" &&
+    echo "=====| Update brew |=======" &&
+    brew-upgrade
+
+  prog_exists pip3 &&
+    echo "---------------------------" &&
+    echo "=====| Update pip3 |=======" &&
+    pip3-upgrade
+
+  prog_exists pipx &&
+    echo "---------------------------" &&
+    echo "=====| Update pipx |=======" &&
+    pipx upgrade-all
+
+  prog_exists cargo-install-update &&
+    echo "---------------------------" &&
+    echo "=====| Update cargo |=====" &&
+    cargo install-update -a
+
+  prog_exists npm &&
+    echo "---------------------------" &&
+    echo "=====| Update npm |========" &&
+    npm update -g --all
+
+  prog_exists yarn &&
+    echo "---------------------------" &&
+    echo "=====| Update yarn |=======" &&
+    yarn global upgrade
+
+  prog_exists nvim-plugins &&
+    echo "---------------------------" &&
+    echo "=====| Update nvim |=======" &&
+    nvim-plugins
+
+  prog_exists addon-updates &&
+    echo "---------------------------" &&
+    echo "=====| Update addons |=====" &&
+    addon-updates
+
+  echo "----| Finished Updates |---"
 }
 
 alias yaml2js="python3 -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"

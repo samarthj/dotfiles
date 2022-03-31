@@ -100,18 +100,18 @@ local function lsp_connected()
 end
 
 local function lsp_count(kind, icon)
-    local n = vim.lsp.diagnostic.get_count(0, kind)
-    if n == 0 then
+    local list = vim.diagnostic.get(0, { severity = kind })
+    if #list == 0 then
         return nil
     end
-    return icon .. ' ' .. n
+    return icon .. ' ' .. #list
 end
 
 local function lsp_warns()
-    return lsp_count('Warning', icons.lsp_warn)
+    return lsp_count(vim.diagnostic.severity.WARN, icons.lsp_warn)
 end
 local function lsp_errors()
-    return lsp_count('Error', icons.lsp_error)
+    return lsp_count(vim.diagnostic.severity.ERROR, icons.lsp_error)
 end
 
 local function percent()

@@ -242,7 +242,7 @@ local function setup_diagnostics()
     if USE_DIAGNOSTIC_QUICKFIX then
         lsp.handlers[method] = function(...)
             diagnostics_handler(...)
-            local all_diagnostics = vim.lsp.diagnostic.get_all()
+            local all_diagnostics = vim.diagnostic.get()
             local qflist = {}
             for bufnr, diagnostic in pairs(all_diagnostics) do
                 for _, diag in ipairs(diagnostic) do

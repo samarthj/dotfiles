@@ -198,7 +198,7 @@ function M.glob_exists(path)
 end
 
 M.show_lsp_diagnostics = (function()
-    local show_diagnostics = vim.lsp.diagnostic.show_line_diagnostics
+    local show_diagnostics = vim.diagnostic.open_float
     local cursor_pos = M.get_cursor_pos()
     local debounced = M.debounce(show_diagnostics, 300)
     return function()

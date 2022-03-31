@@ -150,21 +150,21 @@ gls.right = {{
 }, {
     DiagnosticWarn = {
         provider = function()
-            local n = vim.lsp.diagnostic.get_count(0, 'Warning')
-            if n == 0 then
+            local n = vim.diagnostic.get(0, {severity = vim.diagnostic.severity.WARN})
+            if #n == 0 then
                 return ''
             end
-            return string.format(' %s %d ', icons.lsp_warn, n)
+            return string.format(' %s %d ', icons.lsp_warn, #n)
         end,
         highlight = {'yellow', cl.bg}
     },
     DiagnosticError = {
         provider = function()
-            local n = vim.lsp.diagnostic.get_count(0, 'Error')
-            if n == 0 then
+            local n = vim.diagnostic.get(0, {severity = vim.diagnostic.severity.ERROR})
+            if #n == 0 then
                 return ''
             end
-            return string.format(' %s %d ', icons.lsp_error, n)
+            return string.format(' %s %d ', icons.lsp_error, #n)
         end,
         highlight = {'red', cl.bg}
     }

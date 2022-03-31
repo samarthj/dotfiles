@@ -345,7 +345,7 @@ setup_rust_clis() {
   install_completion "https://raw.githubusercontent.com/BurntSushi/ripgrep/master/complete/_rg" "_rg"
   install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/complete/_fd" "_fd"
 
-  alias cat='bat --paging=never -A'
+  alias cat='bat --paging=never -p'
 
   setup_exa
   setup_delta

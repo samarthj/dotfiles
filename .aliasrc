@@ -52,6 +52,7 @@ global-find() {
   sudo fd -E "timeshift" -E "overlay" \
     -E "usr/share/man/*" \
     -E "var/lib/docker/*" \
+    -E "mnt/MEDIA/*" \
     "$@" /
 }
 
@@ -75,6 +76,7 @@ pip3-upgrade() {
     $(python3 -m pip list --format json |
       jq '.[].name' -r |
       grep -v PyGObject |
+      grep -v Shredder |
       tr '\n' ' ' |
       sed 's/\s$//') |
     grep -v "Requirement already satisfied"
@@ -183,4 +185,11 @@ op_get_totp() {
 export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
   --ignore-file ~/ws/my_dotfiles/main/.fdignore"
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-alias dc-pup='docker-compose pull && docker-compose up --force-recreate -d && docker image prune -f'
+
+alias dc-pup='docker-compose pull; docker-compose up -d --force-recreate; docker image prune -f'
+alias dc-rup='docker-compose up -d --force-recreate'
+alias dc-up='docker-compose up -d'
+alias dc-dw='docker-compose down'
+alias pc-pup='podman-compose pull; podman-compose -t identity up -d --force-recreate; podman image prune -f'
+alias pc-rup='podman-compose -t identity up -d --force-recreate'
+alias duflf='sudo duf -only local,fuse'

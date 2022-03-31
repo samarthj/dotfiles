@@ -100,3 +100,7 @@ bindkey -M viins '^[^T' renew_tmux_env
 umask 002
 
 [ -f $HOME/addon.zshrc ] && source $HOME/addon.zshrc
+[ -f /usr/share/clang/bash-autocomplete.sh ] && source /usr/share/clang/bash-autocomplete.sh
+
+zstyle ':completion:*' menu select
+fpath+=~/.zfunc

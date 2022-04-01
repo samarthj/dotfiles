@@ -47,3 +47,11 @@ conditionally_add prog_plugins
 
 # init
 eval "$(sheldon source)"
+echo "sheldon loaded..."
+
+bindkey "^[[A" history-substring-search-up
+bindkey "^[[B" history-substring-search-down
+# shellcheck disable=SC2154
+bindkey "${terminfo[kcuu1]}" history-substring-search-up
+bindkey "${terminfo[kcud1]}" history-substring-search-down
+export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1

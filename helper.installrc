@@ -107,15 +107,15 @@ setup_homebrew_prefix() {
 # shellcheck disable=SC2016
 install_brew() {
   setup_homebrew_prefix
-  prog_exists brew && eval "$($HOMEBREW_PREFIX/bin/brew shellenv)" && return
+  prog_exists brew && return
   echo "-------------------"
   echo "installing Homebrew..." &&
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   setup_homebrew_prefix
-  if [ -n "$HOMEBREW_PREFIX" ]; then
-    # echo "eval \$($HOMEBREW_PREFIX/bin/brew shellenv)" >>"$HOME"/.zprofile
-    eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
-  fi
+  # if [ -n "$HOMEBREW_PREFIX" ]; then
+  #   # echo "eval \$($HOMEBREW_PREFIX/bin/brew shellenv)" >>"$HOME"/.zprofile
+  #   eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
+  # fi
 }
 
 install_brew_patchelf() {
@@ -284,7 +284,9 @@ install_rustup() {
 install_rust_clis() {
   prog_exists apt &&
     sudo apt-get install -y librust-libz-sys-dev >/dev/null
-  prog_exists pacman && sudo pacman -Sy zlib >/dev/null
+  if [ "$(prog_exists pacman)" ] && [ ! "$(pacman -Q zlib >/dev/null)" ]; then
+    sudo pacman -Sy zlib >/dev/null
+  fi
   install_cli=()
   # du replacement
   prog_exists dust || install_cli+=(du-dust)

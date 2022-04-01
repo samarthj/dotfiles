@@ -261,7 +261,7 @@ install_fzf() {
   prog_exists fzf && return
   os_install fzf ||
     brew install fzf
-  # shellcheck disable=SC1090
+  # shellcheck disable=SC1090,SC1091
   [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
 }
 

@@ -99,7 +99,7 @@ setup_homebrew_prefix() {
     if [ -d "$HOME/.linuxbrew" ]; then
       HOMEBREW_PREFIX="$HOME/.linuxbrew"
     elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
-      HOMEBREW_PREFIX="$HOME/.linuxbrew"
+      HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
     fi
   fi
 }

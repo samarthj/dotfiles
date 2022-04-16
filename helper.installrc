@@ -98,7 +98,8 @@ install_pip() {
 
 install_pipx() {
   prog_exists pipx && return
-  os_install pipx
+  python3 -m pip install --user pipx
+
   eval "$(register-python-argcomplete pipx)"
 }
 
@@ -153,7 +154,7 @@ install_neovim() {
   # latest="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
   # wget "$latest"
   # tar -xvf -C "${HOME}/.local/" "nvim-linux64.tar.gz"
-  is_os manjaro && sudo pacman -Sy neovim-git
+  is_os manjaro && sudo pamac install neovim-git
   is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
   prog_exists nvim || prog_exists brew && brew install --HEAD neovim
 
@@ -312,7 +313,7 @@ install_rust_clis() {
   # regex creation via test samples util
   prog_exists grex || install_cli+=(grex)
   # ls replacement
-  prog_exists exa || install_cli+=(exa)
+  prog_exists exa || os_install exa #install_cli+=(exa)
   # s/sed/sd/g
   prog_exists sd || install_cli+=(sd)
   # cat replacement
@@ -360,7 +361,7 @@ setup_rust_clis() {
   echo "setup rust_clis..."
 
   install_completion "https://raw.githubusercontent.com/BurntSushi/ripgrep/master/complete/_rg" "_rg"
-  install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/complete/_fd" "_fd"
+  install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/completion/_fd" "_fd"
 
   alias cat='bat --paging=never -p'
 

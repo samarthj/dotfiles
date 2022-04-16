@@ -6,7 +6,7 @@ source "${HOME}"/.installrc
 # Oh My Zsh settings here
 plugins=(
   # Autocomplete / aliases
-  github gitignore golang
+  git github gitignore golang
   #Admin
   sudo systemadmin systemd
   # File / Directory management
@@ -17,6 +17,8 @@ plugins=(
   alias-finder compleat common-aliases
   command-not-found cp encode64 extract
   jsontools safe-paste
+  # programs
+  1password rust
   # secrets
   ssh-agent gpg-agent
 )
@@ -38,11 +40,11 @@ conditionally_add() {
 # program dependent helpers
 prog_plugins=(
   adb ansible ant aws bazel brew
-  bundler cargo docker docker-compose
-  fasd fzf gcloud git httpie kate
-  keychain minikube nmap node npm
+  bundler celery docker docker-compose
+  fasd fzf gcloud httpie kate
+  keychain kubectl minikube mvn nmap node npm
   npx nvm pass pip pipenv rsync ruby
-  rust rustup rvm tmux ufw yarn
+  rvm tmux ufw yarn
 )
 conditionally_add $prog_plugins
 

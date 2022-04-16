@@ -57,7 +57,7 @@ global-find() {
 }
 
 # Helpful aliases
-setup_rust_clis
+[ -z "${INSTALL_RUSTCLIS}" ] || setup_rust_clis
 
 # shellcheck disable=SC1090,SC1091
 source "$HOME/personal.aliasrc"
@@ -96,7 +96,7 @@ update-all-the-things() {
     echo "=====| Update pkgmgr |=====" &&
     sudo pacman -Sy && sudo powerpill -Su && paru -Su
 
-  prog_exists apt &&
+  prog_exists apt-get &&
     echo "---------------------------" &&
     echo "=====| Update pkgmgr |=====" &&
     sudo apt-get update && sudo apt-get upgrade

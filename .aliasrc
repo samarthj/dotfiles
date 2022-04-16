@@ -119,6 +119,7 @@ update-all-the-things() {
   prog_exists pipx &&
     echo "---------------------------" &&
     echo "=====| Update pipx |=======" &&
+    # python3 -m pip install --user -U pipx &&
     pipx upgrade-all
 
   prog_exists cargo-install-update &&

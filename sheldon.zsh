@@ -43,7 +43,7 @@ prog_plugins=(
   bundler celery docker docker-compose
   fasd fzf gcloud httpie kate
   keychain kubectl minikube mvn nmap node npm
-  npx nvm pass pip pipenv rsync ruby
+  nvm pass pip rsync ruby
   rvm tmux ufw yarn
 )
 conditionally_add $prog_plugins

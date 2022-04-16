@@ -7,13 +7,14 @@ install_ssl
 
 # install plugin manager
 install_sheldon
-command -v apt && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
+command -v apt-get && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
 
 # Install the basic software
 install_brew
 fpath+="$HOMEBREW_PREFIX/etc/bash_completion.d"
 install_git
 install_dnsutils
+install_python3
 install_pip
 install_pipx
 
@@ -23,6 +24,7 @@ os_install shellcheck
 os_install htop
 os_install jq
 install_tmux
+install_nvm
 install_neovim
 install_nvim_plugins
 

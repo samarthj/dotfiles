@@ -84,6 +84,11 @@ install_conda() {
   conda install argcomplete
 }
 
+install_python3() {
+  prog_exists python3 && return
+  os_install python3
+}
+
 install_pip() {
   prog_exists pip3 && return
   os_install python3-pip ||
@@ -103,6 +108,8 @@ setup_homebrew_prefix() {
       HOMEBREW_PREFIX="$HOME/.linuxbrew"
     elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
       HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
+    elif [ -d "/usr/local" ] && [ -x "/usr/local/bin/brew" ]; then
+      HOMEBREW_PREFIX="/usr/local"
     fi
   fi
 }
@@ -198,6 +205,8 @@ install_nvim_plugins() {
       # ./3rd/luamake/luamake rebuild
     fi
   )
+
+  prog_exists rustup || return
   rustup component list --installed | grep -q rust-analyzer ||
     rustup +nightly component add rust-analyzer-preview
   [ -d "${XDG_DATA_HOME}"/nvim/site/pack/packer/start/packer.nvim ] ||

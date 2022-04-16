@@ -10,8 +10,8 @@ install_sheldon
 command -v apt-get && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
 
 # Install the basic software
-install_brew
-fpath+="$HOMEBREW_PREFIX/etc/bash_completion.d"
+[ -z "${INSTALL_RUBY}" ] || os_install ruby
+[ -z "${INSTALL_BREW}" ] || install_brew
 install_git
 install_dnsutils
 install_python3
@@ -23,6 +23,7 @@ os_install expect
 os_install shellcheck
 os_install htop
 os_install jq
+os_install duf
 install_tmux
 install_nvm
 install_neovim
@@ -34,11 +35,10 @@ install_nvim_plugins
 # Install configurable software
 [ -z "${INSTALL_RUST}" ] || install_rustup
 [ -z "${INSTALL_RUSTCLIS}" ] || install_rust_clis
-[ -z "${INSTALL_RUBY}" ] || os_install ruby
 [ -z "${INSTALL_GCC}" ] || install_gcc
 [ -z "${INSTALL_NODE}" ] || install_nvm
 [ -z "${INSTALL_DOCKER}" ] || install_docker
-[ -z "${INSTALL_FZF}" ] || install_fzf
+# [ -z "${INSTALL_FZF}" ] || install_fzf
 [ -z "${INSTALL_FZF}" ] || export ENHANCD_FILTER=fzf-tmux
 [ -z "${INSTALL_PASS}" ] || install_pass
 [ -z "${INSTALL_KEYCHAIN}" ] || install_keychain

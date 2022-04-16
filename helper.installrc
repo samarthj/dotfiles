@@ -122,6 +122,7 @@ install_brew() {
   echo "installing Homebrew..." &&
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
   setup_homebrew_prefix
+  fpath+="$HOMEBREW_PREFIX/etc/bash_completion.d"
   # if [ -n "$HOMEBREW_PREFIX" ]; then
   #   # echo "eval \$($HOMEBREW_PREFIX/bin/brew shellenv)" >>"$HOME"/.zprofile
   #   eval "$($HOMEBREW_PREFIX/bin/brew shellenv)"
@@ -130,19 +131,19 @@ install_brew() {
 
 install_brew_patchelf() {
   echo "-------------------"
-  brew install patchelf
+  prog_exists brew && brew install patchelf
 }
 
 install_git() {
   prog_exists git && return
   os_install git ||
-    brew install git
+    prog_exists brew && brew install git
 }
 
 install_gcc() {
   prog_exists gcc && return
   os_install gcc ||
-    brew install gcc
+    prog_exists brew && brew install gcc
 }
 
 install_neovim() {
@@ -154,7 +155,7 @@ install_neovim() {
   # tar -xvf -C "${HOME}/.local/" "nvim-linux64.tar.gz"
   is_os manjaro && sudo pacman -Sy neovim-git
   is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
-  prog_exists nvim || brew install --HEAD neovim
+  prog_exists nvim || prog_exists brew && brew install --HEAD neovim
 
   # install the addons
   prog_exists python3 && python3 -m pip install pynvim
@@ -245,7 +246,7 @@ install_docker() {
     (is_os amzn && sudo yum install -y docker) ||
     (is_os manjaro && sudo pacman -Sy docker --noconfirm)
   echo "install ecr-cred-helper..."
-  brew install docker-credential-helper-ecr
+  prog_exists brew && brew install docker-credential-helper-ecr
   echo "configuring docker..."
   sudo usermod -aG docker "$USER"
   sudo systemctl enable docker
@@ -265,14 +266,14 @@ install_fasd() {
     echo "installing fasd..."
     is_os ubuntu && sh -c 'sudo add-apt-repository -y ppa:aacebedo/fasd && sudo apt-get update && sudo apt-get install -y fasd' ||
       is_os manjaro && sudo pacman -Sy fasd --noconfirm ||
-      brew install fasd
+      prog_exists brew && brew install fasd
   fi
 }
 
 install_fzf() {
   prog_exists fzf && return
   os_install fzf ||
-    brew install fzf
+    prog_exists brew && brew install fzf
   # shellcheck disable=SC1090,SC1091
   [ -f "${HOME}/.fzf.zsh" ] && source "${HOME}/.fzf.zsh"
 }
@@ -321,10 +322,12 @@ install_rust_clis() {
   # find replacement
   prog_exists fd || install_cli+=(fd-find)
   # TODO: fix install, failing with - Could not install openssl-sys
-  if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
-    openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
-    openssl_ver="$(openssl version | cut -d' ' -f2)"
-    export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
+  if prog_exists brew; then
+    if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
+      openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
+      openssl_ver="$(openssl version | cut -d' ' -f2)"
+      export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
+    fi
   fi
   # man alternative
   prog_exists tldr || install_cli+=(tealdeer)
@@ -398,11 +401,11 @@ setup_delta() {
 install_pass() {
   prog_exists pass && return
   os_install pass ||
-    brew install pass
+    prog_exists brew && brew install pass
 }
 
 install_keychain() {
   prog_exists keychain && return
   os_install keychain ||
-    brew install keychain
+    prog_exists brew && brew install keychain
 }

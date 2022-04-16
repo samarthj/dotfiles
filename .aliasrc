@@ -156,30 +156,30 @@ alias yaml2js="python3 -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin
 # shellcheck disable=SC2154
 op_signin() {
   if [[ -z "$OP_SESSION_my" ]]; then
-    eval "$(kwallet-query -f Passwords -r 1pass --display :0 kdewallet | op signin my)"
+    export OP_SESSION_my="$(pass 1pass | op signin --account my --raw)"
   else
-    eval "$(kwallet-query -f Passwords -r 1pass --display :0 kdewallet | op signin my --session "$OP_SESSION_my")"
+    eval "$(pass 1pass | op signin --account my --session "$OP_SESSION_my")"
   fi
 }
 
 # get op password
 # shellcheck disable=SC2181
 op_get_pw() {
-  [[ -n "$OP_SESSION_my" ]] && op --cache get item "$1" --fields password --session "$OP_SESSION_my"
+  [[ -n "$OP_SESSION_my" ]] && op item --cache get "$1" --fields password --session "$OP_SESSION_my"
   [[ $? -ne 0 ]] && op_signin && op_get_pw "$@"
 }
 
 # get op specific field
 # shellcheck disable=SC2181
 op_get_field() {
-  [[ -n "$OP_SESSION_my" ]] && op --cache get item "$1" --fields "$2" --session "$OP_SESSION_my"
+  [[ -n "$OP_SESSION_my" ]] && op item --cache get "$1" --fields "$2" --session "$OP_SESSION_my"
   [[ $? -ne 0 ]] && op_signin && op_get_field "$@"
 }
 
 # get op totp
 # shellcheck disable=SC2181
 op_get_totp() {
-  [[ -n "$OP_SESSION_my" ]] && op --cache get totp "$1" --session "$OP_SESSION_my"
+  [[ -n "$OP_SESSION_my" ]] && op item --cache get --otp "$1" --session "$OP_SESSION_my"
   [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
 }
 

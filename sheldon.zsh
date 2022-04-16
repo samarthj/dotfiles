@@ -3,13 +3,6 @@
 # shellcheck disable=SC1090
 source "${HOME}"/.installrc
 
-conditionally_add() {
-  plugs=$1
-  for p in ${plugs[@]}; do
-    prog_exists $p && plugins+=$1
-  done
-}
-
 # Oh My Zsh settings here
 plugins=(
   # Autocomplete / aliases
@@ -33,6 +26,14 @@ is_os ubuntu && plugins+=ubuntu
 is_os debian && plugins+=debian
 is_os manjaro && plugins+=archlinux
 is_os amzn && plugins+=yum
+is_os Darwin && plugins+=macos
+
+conditionally_add() {
+  plugs=("$@")
+  for p in ${plugs[@]}; do
+    prog_exists $p && plugins+=$p
+  done
+}
 
 # program dependent helpers
 prog_plugins=(
@@ -43,7 +44,7 @@ prog_plugins=(
   npx nvm pass pip pipenv rsync ruby
   rust rustup rvm tmux ufw yarn
 )
-conditionally_add prog_plugins
+conditionally_add $prog_plugins
 
 # init
 eval "$(sheldon source)"

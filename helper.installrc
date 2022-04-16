@@ -1,7 +1,9 @@
 #!/bin/bash
 
 is_os() {
-  [[ "$1" == "$(awk -F= '/^ID=/{print $2}' /etc/os-release)" ]]
+  [[ "$1" == "$(uname -s)" ]] && return 0
+  [[ -f "/etc/os-release" ]] && [[ "$1" == "$(awk -F= '/^ID=/{print $2}' /etc/os-release)" ]] && return 0
+  return 1
 }
 
 file_exists() {
@@ -24,7 +26,8 @@ os_install() {
   (is_os ubuntu && sudo apt-get install -y "$prog") ||
     (is_os debian && sudo apt-get install -y "$prog") ||
     (is_os amzn && sudo yum install -y "$prog") ||
-    (is_os manjaro && sudo pacman -Sy "$prog" --noconfirm)
+    (is_os manjaro && sudo pacman -Sy "$prog" --noconfirm) ||
+    (is_os Darwin && brew install "$prog")
 }
 
 install_ssl() {

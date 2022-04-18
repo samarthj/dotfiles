@@ -60,12 +60,11 @@ global-find() {
 [ -z "${INSTALL_RUSTCLIS}" ] || setup_rust_clis
 
 # shellcheck disable=SC1090,SC1091
-source "$HOME/personal.aliasrc"
 alias src-aliases='source ~/.aliasrc'
 
 # secrets
 alias reload-keys="keychain --eval --noask --agents ssh --inherit any"
-alias gpgkey="keychain -Q --eval --noask --agents gpg EFD3610504F2D28E9F2FE265A99A281050C277BB"
+alias gpgkey="keychain -Q --eval --noask --agents gpg DDF971A840632EDD95A23F27472AF341233F3527"
 alias sshkey="keychain -Q --eval --noask --agents ssh id_rsa"
 alias frigga="docker run --rm -it unfor19/frigga"
 
@@ -188,9 +187,12 @@ export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
 alias dc-pup='docker-compose pull; docker-compose up -d --force-recreate; docker image prune -f'
-alias dc-rup='docker-compose up -d --force-recreate'
+alias dc-rup='docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-up='docker-compose up -d'
 alias dc-dw='docker-compose down'
 alias pc-pup='podman-compose pull; podman-compose up -d --force-recreate; podman image prune -f'
-alias pc-rup='podman-compose up -d --force-recreate'
+alias pc-rup='podman-compose up -d --force-recreate; podman image prune -f'
 alias duflf='sudo duf -only local,fuse'
+
+source "$HOME/personal.aliasrc"
+echo "aliases loaded ..."

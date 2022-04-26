@@ -22,6 +22,7 @@ export SSH_KEY_PATH="~/.ssh/id_rsa"
 zstyle :omz:plugins:ssh-agent agent-forwarding on
 [ -f $HOME/.ssh/id_rsa ] && zstyle :omz:plugins:ssh-agent identities id_rsa
 [ -f $HOME/.ssh/aur ] && zstyle :omz:plugins:ssh-agent identities aur
+[ -f $HOME/.ssh/macos ] && zstyle :omz:plugins:ssh-agent identities macos
 [ -f $HOME/.ssh/id_ed25519 ] && zstyle :omz:plugins:ssh-agent identities id_ed25519
 
 # sheldon setup

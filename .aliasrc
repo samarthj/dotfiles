@@ -2,13 +2,38 @@
 setopt +o nomatch
 
 set-title() {
-  echo -e "\e]0;$*\007"
+  if [ -n "$TMUX" ]; then
+    # Note: Options without parameter were hardcoded,
+    # in order to distinguish an option's parameter from the destination.
+    #
+    #                   s/[[:space:]]*\(\( | spaces before options
+    #     \(-[46AaCfGgKkMNnqsTtVvXxYy]\)\| | option without parameter
+    #                     \(-[^[:space:]]* | option
+    # \([[:space:]]\+[^[:space:]]*\)\?\)\) | parameter
+    #                      [[:space:]]*\)* | spaces between options
+    #                        [[:space:]]\+ | spaces before destination
+    #                \([^-][^[:space:]]*\) | destination
+    #                                   .* | command
+    #                                 /\6/ | replace with destination
+    tmux rename-window "$(echo "$@" |
+      sed 's/[[:space:]]*\(\(\(-[46AaCfGgKkMNnqsTtVvXxYy]\)\|\(-[^[:space:]]*\([[:space:]]\+[^[:space:]]*\)\?\)\)[[:space:]]*\)*[[:space:]]\+\([^-][^[:space:]]*\).*/\6/')"
+  else
+    echo -e "\e]0;$*\007"
+  fi
+}
+
+unset-title() {
+  if [ -n "$TMUX" ]; then
+    tmux set-window-option automatic-rename "on" 1>/dev/null
+  else
+    echo -e "$HOST"
+  fi
 }
 
 ssh() {
   set-title "$@"
-  /usr/bin/ssh -2 "$@"
-  set-title "$HOST"
+  command ssh -2 "$@"
+  unset-title
 }
 
 nvim-qt() {
@@ -93,7 +118,7 @@ update-all-the-things() {
   prog_exists pacman && prog_exists pacman && prog_exists pacman &&
     echo "---------------------------" &&
     echo "=====| Update pkgmgr |=====" &&
-    sudo pacman -Sy && sudo powerpill -Su && paru -Su
+    sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview
 
   prog_exists apt-get &&
     echo "---------------------------" &&

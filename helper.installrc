@@ -301,9 +301,9 @@ install_rustup() {
 }
 
 install_rust_clis() {
-  prog_exists apt &&
+  if is_os ubuntu || is_os debian; then
     sudo apt-get install -y librust-libz-sys-dev >/dev/null
-  if [ "$(prog_exists pacman)" ] && [ ! "$(pacman -Q zlib >/dev/null)" ]; then
+  elif is_os manjaro && [ ! "$(pacman -Q zlib >/dev/null)" ]; then
     sudo pacman -Sy zlib >/dev/null
   fi
   install_cli=()
@@ -328,13 +328,14 @@ install_rust_clis() {
   # find replacement
   prog_exists fd || install_cli+=(fd-find)
   # TODO: fix install, failing with - Could not install openssl-sys
-  if prog_exists brew; then
-    if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
-      openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
-      openssl_ver="$(openssl version | cut -d' ' -f2)"
-      export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
-    fi
-  fi
+  # if prog_exists brew && is_os Darwin; then
+  #   if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
+  #     export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+  #     openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
+  #     openssl_ver="$(openssl version | cut -d' ' -f2)"
+  #     export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
+  #   fi
+  # fi
   # man alternative
   prog_exists tldr || install_cli+=(tealdeer)
   # cargo updates

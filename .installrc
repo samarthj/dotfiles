@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 source "${HOME}"/helper.installrc
+
+export POWERLEVEL9K_INSTANT_PROMPT=off
 
 install_ssl
 
@@ -25,7 +27,6 @@ os_install htop
 os_install jq
 os_install duf
 install_tmux
-install_nvm
 install_neovim
 install_nvim_plugins
 

@@ -327,6 +327,8 @@ install_rust_clis() {
   prog_exists delta || install_cli+=(git-delta)
   # find replacement
   prog_exists fd || install_cli+=(fd-find)
+  # cut replacement
+  prog_exists hck || install_cli+=(hck)
   # TODO: fix install, failing with - Could not install openssl-sys
   # if prog_exists brew && is_os Darwin; then
   #   if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
@@ -370,6 +372,7 @@ setup_rust_clis() {
   install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/completion/_fd" "_fd"
 
   alias cat='bat --paging=never -p'
+  alias cut='hck'
 
   setup_exa
   setup_delta

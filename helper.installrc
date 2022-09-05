@@ -303,7 +303,7 @@ install_rustup() {
 install_rust_clis() {
   if is_os ubuntu || is_os debian; then
     sudo apt-get install -y librust-libz-sys-dev >/dev/null
-  elif is_os manjaro && [ ! "$(pacman -Q zlib >/dev/null)" ]; then
+  elif is_os manjaro && ! pacman -Q zlib >/dev/null; then
     sudo pacman -Sy zlib >/dev/null
   fi
   install_cli=()

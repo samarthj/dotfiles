@@ -141,11 +141,6 @@ update-all-the-things() {
     echo "=====| Update brew |=======" &&
     brew-upgrade
 
-  prog_exists pip3 &&
-    echo "---------------------------" &&
-    echo "=====| Update pip3 |=======" &&
-    pip3-upgrade
-
   prog_exists pipx &&
     echo "---------------------------" &&
     echo "=====| Update pipx |=======" &&

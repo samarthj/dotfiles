@@ -17,6 +17,9 @@ zmodload zsh/mapfile
 [ -f $HOME/personal.pathrc ] && source $HOME/personal.pathrc
 echo "paths loaded ..."
 
+# sheldon setup
+source $HOME/sheldon.zsh
+
 # ssh
 export SSH_KEY_PATH="~/.ssh/id_rsa"
 zstyle :omz:plugins:ssh-agent agent-forwarding on
@@ -24,9 +27,6 @@ zstyle :omz:plugins:ssh-agent agent-forwarding on
 [ -f $HOME/.ssh/aur ] && zstyle :omz:plugins:ssh-agent identities aur
 [ -f $HOME/.ssh/macos ] && zstyle :omz:plugins:ssh-agent identities macos
 [ -f $HOME/.ssh/id_ed25519 ] && zstyle :omz:plugins:ssh-agent identities id_ed25519
-
-# sheldon setup
-source $HOME/sheldon.zsh
 
 # install ncurses-compat-libs
 cols=$(tput cols)

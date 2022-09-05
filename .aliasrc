@@ -115,10 +115,16 @@ brew-upgrade() {
 
 #shellcheck disable=SC2046
 update-all-the-things() {
-  prog_exists pacman && prog_exists pacman && prog_exists pacman &&
+  prog_exists paru &&
     echo "---------------------------" &&
     echo "=====| Update pkgmgr |=====" &&
-    sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview
+    #sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview
+    sudo echo -n "sudo" && paru -Syu --skipreview --batchinstall --sudoloop --removemake
+
+  prog_exists paru || (prog_exists pacman && prog_exists pacman && prog_exists pacman &&
+    echo "---------------------------" &&
+    echo "=====| Update pkgmgr |=====" &&
+    sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview)
 
   prog_exists apt-get &&
     echo "---------------------------" &&

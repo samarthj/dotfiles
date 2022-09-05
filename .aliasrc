@@ -216,8 +216,10 @@ alias dc-pup='docker-compose pull; docker-compose up -d --force-recreate; docker
 alias dc-rup='docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-up='docker-compose up -d'
 alias dc-dw='docker-compose down'
-alias pc-pup='podman-compose pull; podman-compose up -d --force-recreate; podman image prune -f'
-alias pc-rup='podman-compose up -d --force-recreate; podman image prune -f'
+alias pc-pup='podman-compose --no-pod up -d --pull --force-recreate'
+alias pc-rup='podman-compose --no-pod up -d --force-recreate'
+alias pc-up='podman-compose --no-pod up -d --no-recreate'
+alias pc-dw='podman-compose --no-pod down'
 alias duflf='sudo duf -only local,fuse'
 
 source "$HOME/personal.aliasrc"

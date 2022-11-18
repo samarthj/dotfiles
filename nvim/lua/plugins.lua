@@ -1,13 +1,8 @@
 local function load(use)
-    use {
-        'wbthomason/packer.nvim',
-        opt = true
-    }
 
     -- Themes
     use {
         'ayu-theme/ayu-vim',
-        opt = true,
         disable = true
     }
     use {
@@ -25,12 +20,18 @@ local function load(use)
     use {
         'npxbr/gruvbox.nvim',
         disable = true,
-        requires = {'rktjmp/lush.nvim'}
+        requires = { 'rktjmp/lush.nvim' }
     }
-    use {'RRethy/nvim-base16'}
+    use {
+        'RRethy/nvim-base16',
+        config = function()
+            vim.g.base16_theme = 'base16-atelier-lakeside'
+            require('base16-colorscheme').setup('atelier-lakeside')
+        end
+    }
 
     -- Icons
-    use {'kyazdani42/nvim-web-devicons'}
+    use 'nvim-tree/nvim-web-devicons'
 
     -- Tools
     use {
@@ -42,58 +43,35 @@ local function load(use)
             vim.g['surround_' .. char2nr('c')] = "/* \r */"
         end
     }
-    use {
-        'b3nj5m1n/kommentary',
-        config = function()
-            require('kommentary.config').configure_language('default', {
-                prefer_single_line_comments = true
-            })
-        end
-    }
+    -- use {
+    --     'b3nj5m1n/kommentary',
+    --     config = function()
+    --         require('kommentary.config').configure_language('default', {
+    --             prefer_single_line_comments = true
+    --         })
+    --     end
+    -- }
 
     use {
         'nvim-telescope/telescope.nvim',
         requires = {
-          'kyazdani42/nvim-web-devicons',
-          'nvim-lua/popup.nvim',
-          'nvim-lua/plenary.nvim'
+            { 'nvim-tree/nvim-web-devicons' },
+            { 'nvim-lua/popup.nvim' },
+            { 'nvim-lua/plenary.nvim' }
         },
         config = function()
-            local telescope = require 'telescope'
-            local actions = require 'telescope.actions'
-            local u = require'utils'.u
-            -- local previewers = require 'telescope.previewers'
-            local cfg = {
-                sorting_strategy = 'ascending',
-                prompt_prefix = u 'f002' .. ' ',
-                layout_config = {
-                  prompt_position = 'top',
-                },
-                selection_caret = u 'f054' .. ' ',
-                color_devicons = true,
-                scroll_strategy = 'cycle',
-                mappings = {
-                    i = {
-                        ['<C-K>'] = actions.move_selection_previous,
-                        ['<C-J>'] = actions.move_selection_next,
-                        ['<Esc>'] = actions.close
-                    }
-                }
-            }
-            telescope.setup {
-                defaults = cfg
-            }
+            require('cfg.telescope')
         end
     }
 
-    use {'wellle/targets.vim'} -- More useful text objects (e.g. function arguments)
+    use { 'wellle/targets.vim' } -- More useful text objects (e.g. function arguments)
 
-    use {'tpope/vim-fugitive'} -- Git helper
+    use { 'tpope/vim-fugitive' } -- Git helper
 
     use {
         'airblade/vim-gitgutter',
         config = function()
-            local u = require'utils'.u
+            local u = require 'utils'.u
             local gutter = u '2595'
             vim.g.gitgutter_sign_added = gutter
             vim.g.gitgutter_sign_modified = gutter
@@ -113,25 +91,28 @@ local function load(use)
         }
     end
 
-    use {'chrisbra/Colorizer'}
+    use { 'chrisbra/Colorizer' }
 
-    use {'mattn/emmet-vim'}
+    use { 'mattn/emmet-vim' }
 
     -- Missing languages in tree-sitter
-    use {'neovimhaskell/haskell-vim'}
-    use {'editorconfig/editorconfig-vim'}
-    use {'elixir-editors/vim-elixir'}
-    use {'chr4/nginx.vim'}
-    use {'tpope/vim-markdown'}
-    use {'adimit/prolog.vim'}
+    use { 'neovimhaskell/haskell-vim' }
+    use { 'editorconfig/editorconfig-vim' }
+    use { 'elixir-editors/vim-elixir' }
+    use { 'chr4/nginx.vim' }
+    use { 'tpope/vim-markdown' }
+    use { 'adimit/prolog.vim' }
 
     if vim.fn.has('unix') > 0 and (vim.fn.executable('g++') > 0 or vim.fn.executable('clang++') > 0) then
         use {
             'nvim-treesitter/nvim-treesitter',
-            requires = {'nvim-treesitter/playground' -- 'nvim-treesitter/nvim-treesitter-refactor',
-            },
+            -- requires = {
+            --     'nvim-treesitter/playground',
+            --     -- 'nvim-treesitter/nvim-treesitter-refactor',
+            -- },
             run = function()
-                vim.cmd('TSUpdate')
+                local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
+                ts_update()
             end,
             config = function()
                 require('cfg.tree_sitter')
@@ -140,15 +121,8 @@ local function load(use)
     end
 
     use {
-        'neovim/nvim-lspconfig',
-        config = function()
-            require('cfg.lspconfig')
-        end
-    }
-
-    use {
         'RRethy/vim-illuminate',
-        disable = true,
+        -- disable = true,
         config = function()
             local utils = require('utils')
             utils.highlight {
@@ -158,49 +132,68 @@ local function load(use)
         end
     }
 
+    -- use {
+    --     'SirVer/ultisnips',
+    --     disable = true,
+    --     config = function()
+    --         vim.g.UltiSnipsExpandTrigger = '<F10>'
+    --         vim.g.UltiSnipsJumpForwardTrigger = '<C-J>'
+    --         vim.g.UltiSnipsJumpBackwardTrigger = '<C-K>'
+    --     end
+    -- }
+    use 'hrsh7th/cmp-buffer'
+    use 'hrsh7th/cmp-path'
+    use 'hrsh7th/cmp-cmdline'
+    use 'hrsh7th/cmp-nvim-lsp'
+    use 'hrsh7th/cmp-vsnip'
+    use 'hrsh7th/vim-vsnip'
+    use 'L3MON4D3/LuaSnip'
+    use 'saadparwaiz1/cmp_luasnip'
+
     use {
-        'SirVer/ultisnips',
-        disable = true,
+        'hrsh7th/nvim-cmp',
+        -- after = {
+        --     'hrsh7th/cmp-nvim-lsp',
+        --     'hrsh7th/cmp-buffer',
+        --     'hrsh7th/cmp-path',
+        --     'hrsh7th/cmp-cmdline',
+        --     'L3MON4D3/LuaSnip',
+        --     'saadparwaiz1/cmp_luasnip'
+        --     -- 'SirVer/ultisnips',
+        --     -- 'honza/vim-snippets',
+        --     -- 'neovim/nvim-lspconfig'
+        --     -- 'nvim-tree/nvim-web-devicons',
+        --     -- opt = true
+        -- },
         config = function()
-            vim.g.UltiSnipsExpandTrigger = '<F10>'
-            vim.g.UltiSnipsJumpForwardTrigger = '<C-J>'
-            vim.g.UltiSnipsJumpBackwardTrigger = '<C-K>'
+            require('cfg.cmp')
         end
     }
 
     use {
-        'hrsh7th/nvim-compe',
-        requires = {
-            'SirVer/ultisnips',
-            'honza/vim-snippets',
-            opt = true
-        },
+        'neovim/nvim-lspconfig',
+        -- requires = {
+        --     -- 'hrsh7th/nvim-cmp',
+        --     'hrsh7th/cmp-nvim-lsp'
+        -- },
+        -- after = { 'cmp-nvim-lsp' },
+        ensure_required = true,
         config = function()
-            require('compe').setup {
-                throttle_time = 200,
-                preselect = 'disable',
-                source = {
-                    path = true,
-                    buffer = true,
-                    calc = true,
-                    nvim_lsp = true,
-                    ultisnips = true
-                }
-            }
+            require('cfg.lsp')
         end
     }
 
     use {
-        'kyazdani42/nvim-tree.lua',
+        'nvim-tree/nvim-tree.lua',
         requires = {
-            'kyazdani42/nvim-web-devicons',
-            opt = true
+            'nvim-tree/nvim-web-devicons',
+            -- opt = true
         },
         config = function()
             local utils = require('utils')
             local u = utils.u
-            utils.highlight {'NvimTreeFolderName', 'Title'}
-            utils.highlight {'NvimTreeFolderIcon', 'Title'}
+            utils.highlight { 'NvimTreeFolderName', 'Title' }
+            utils.highlight { 'NvimTreeFolderIcon', 'Title' }
             vim.g.nvim_tree_icons = {
                 folder = {
                     default = u 'f07b',
@@ -219,104 +212,152 @@ local function load(use)
     use {
         'sbdchd/neoformat',
         config = function()
-            for _, ft in ipairs {'javascript', 'typescript', 'javascriptreact', 'typescriptreact'} do
+            for _, ft in ipairs { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' } do
                 vim.g['neoformat_enabled_' .. ft] = {}
             end
             vim.g.neoformat_try_formatprg = 1
             vim.g.neoformat_run_all_formatters = 0
         end
     }
-end
 
-return function()
-    local sprintf = require('utils').sprintf
-    local packer_install_path = vim.fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
-    local not_installed = vim.fn.empty(vim.fn.glob(packer_install_path)) > 0
+    -- YAML tree-sitter parser
+    use {
+        "cuducos/yaml.nvim",
+        ft = { "yaml" }, -- optional
+        requires = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-telescope/telescope.nvim" -- optional
+        },
+    }
 
-    if not_installed then
-        print('`packer.nvim` is not installed, installing...')
-        local repo = 'https://github.com/wbthomason/packer.nvim'
-        vim.cmd(sprintf('!git clone %s %s', repo, packer_install_path))
-    end
-
-    vim.cmd('packadd packer.nvim')
-    require('packer').startup {
-        load,
-        config = {
-            git = {
-                clone_timeout = 240
-            }
+    -- Helpers
+    use {
+        'sudormrfbin/cheatsheet.nvim',
+        requires = {
+            { 'nvim-telescope/telescope.nvim' },
+            { 'nvim-lua/popup.nvim' },
+            { 'nvim-lua/plenary.nvim' },
         }
     }
-    vim.cmd('autocmd BufWritePost plugins.lua :PackerCompile')
-
-    if not_installed then
-        vim.cmd('PackerSync')
-    end
 end
 
--- -- Plugins can have dependencies on other plugins
--- use {
---     'haorenW1025/completion-nvim',
---     opt = true,
---     requires = {{
---         'hrsh7th/vim-vsnip',
---         opt = true
---     }, {
---         'hrsh7th/vim-vsnip-integ',
---         opt = true
---     }}
+local ensure_packer = function()
+    local fn = vim.fn
+    local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+    if fn.empty(fn.glob(install_path)) > 0 then
+        print('`packer.nvim` is not installed, installing...')
+        fn.system({ 'git', 'clone', '--depth', '1', 'https://github.com/wbthomason/packer.nvim', install_path })
+        vim.cmd [[packadd packer.nvim]]
+        return true
+    end
+    return false
+end
+
+local packer_bootstrap = ensure_packer()
+local packer = require('packer')
+return packer.startup({ function()
+    -- print('`packer` startup...')
+    packer.use 'wbthomason/packer.nvim'
+    -- print('`plugins` load...')
+    load(packer.use)
+
+    -- Automatically set up your configuration after cloning packer.nvim
+    -- Put this at the end after all plugins
+    -- print('`packer` sync...', packer_bootstrap)
+    if packer_bootstrap then
+        packer.sync()
+    else
+        vim.cmd('autocmd BufWritePost plugins.lua :PackerCompile')
+    end
+    -- vim.cmd([[
+    --         augroup packer_user_config
+    --             autocmd!
+    --             autocmd BufWritePost plugins.lua source plugins.lua | PackerCompile
+    --         augroup end
+    -- ]])
+end,
+    config = {
+        display = {
+            non_interactive = true,
+            open_fn = function()
+                return require('packer.util').float({ border = 'single' })
+            end
+        },
+        -- log = { level = 'debug' },
+        git = {
+            clone_timeout = 240
+        },
+        profile = {
+            enable = true,
+            threshold = 1 -- the amount in ms that a plugin's load time must be over for it to be included in the profile
+        },
+        autoremove = true
+    }
+})
+-- return function()
+-- local fn = vim.fn
+-- local packer_install_path = fn.stdpath('data') .. '/site/pack/packer/opt/packer.nvim'
+-- local not_installed = fn.empty(fn.glob(packer_install_path)) > 0
+
+-- if not_installed then
+--     print('`packer.nvim` is not installed, installing...')
+--     local repo = 'https://github.com/wbthomason/packer.nvim'
+--     ---@diagnostic disable-next-line: lowercase-global
+--     packer_bootstrap = fn.system({ 'git', 'clone', '--depth', '1', repo, packer_install_path })
+--     -- vim.cmd('PackerSync')
+--     --     vim.cmd(sprintf('!git clone %s %s', repo, packer_install_path))
+-- end
+
+-- vim.cmd('PackerSync')
+
+-- require('packer').startup {
+--     load,
+--     config = {
+--         git = {
+--             clone_timeout = 240
+--         }
+--     },
+--     -- vim.cmd('PackerSync')
 -- }
+-- vim.cmd('autocmd BufWritePost plugins.lua :PackerCompile')
 
--- -- You can specify rocks in isolation
--- use_rocks 'penlight'
--- use_rocks {'lua-resty-http', 'lpeg'}
+-- if not_installed then
+--     vim.cmd('PackerSync')
+-- end
+-- end
 
--- -- Plugins can have post-install/update hooks
+
+
+-- https://github.com/wbthomason/packer.nvim#specifying-plugins
 -- use {
---     'iamcco/markdown-preview.nvim',
---     run = 'cd app && yarn install',
---     cmd = 'MarkdownPreview'
--- }
-
--- -- Post-install/update hook with neovim command
--- use {
---     'nvim-treesitter/nvim-treesitter',
---     run = ':TSUpdate'
--- }
-
--- -- Post-install/update hook with call of vimscript function with argument
--- use {
---     'glacambre/firenvim',
---     run = function()
---         vim.fn['firenvim#install'](0)
---     end
--- }
-
--- -- Use specific branch, dependency and run lua file after load
--- use {
---     'glepnir/galaxyline.nvim',
---     branch = 'main',
---     config = function()
---         require 'cfg.galaxyline'
---     end,
---     requires = {'kyazdani42/nvim-web-devicons'}
--- }
-
--- -- Use dependency and run lua function after load
--- use {
---     'lewis6991/gitsigns.nvim',
---     requires = {'nvim-lua/plenary.nvim'},
---     config = function()
---         require('gitsigns').setup()
---     end
--- }
-
--- -- You can specify multiple plugins in a single call
--- use {'tjdevries/colorbuddy.vim'}
-
--- -- You can alias plugin names
--- use {
---     'dracula/vim',
---     as = 'dracula'
+--   'myusername/example',        -- The plugin location string
+--   -- The following keys are all optional
+--   disable = boolean,           -- Mark a plugin as inactive
+--   as = string,                 -- Specifies an alias under which to install the plugin
+--   installer = function,        -- Specifies custom installer. See "custom installers" below.
+--   updater = function,          -- Specifies custom updater. See "custom installers" below.
+--   after = string or list,      -- Specifies plugins to load before this plugin. See "sequencing" below
+--   rtp = string,                -- Specifies a subdirectory of the plugin to add to runtimepath.
+--   opt = boolean,               -- Manually marks a plugin as optional.
+--   bufread = boolean,           -- Manually specifying if a plugin needs BufRead after being loaded
+--   branch = string,             -- Specifies a git branch to use
+--   tag = string,                -- Specifies a git tag to use. Supports '*' for "latest tag"
+--   commit = string,             -- Specifies a git commit to use
+--   lock = boolean,              -- Skip updating this plugin in updates/syncs. Still cleans.
+--   run = string, function, or table, -- Post-update/install hook. See "update/install hooks".
+--   requires = string or list,   -- Specifies plugin dependencies. See "dependencies".
+--   rocks = string or list,      -- Specifies Luarocks dependencies for the plugin
+--   config = string or function, -- Specifies code to run after this plugin is loaded.
+--   -- The setup key implies opt = true
+--   setup = string or function,  -- Specifies code to run before this plugin is loaded.
+--   -- The following keys all imply lazy-loading and imply opt = true
+--   cmd = string or list,        -- Specifies commands which load this plugin. Can be an autocmd pattern.
+--   ft = string or list,         -- Specifies filetypes which load this plugin.
+--   keys = string or list,       -- Specifies maps which load this plugin. See "Keybindings".
+--   event = string or list,      -- Specifies autocommand events which load this plugin.
+--   fn = string or list          -- Specifies functions which load this plugin.
+--   cond = string, function, or list of strings/functions,   -- Specifies a conditional test to load this plugin
+--   module = string or list      -- Specifies Lua module names for require. When requiring a string which starts
+--                                -- with one of these module names, the plugin will be loaded.
+--   module_pattern = string/list -- Specifies Lua pattern of Lua module names for require. When requiring a string which matches one of these patterns, the plugin will be loaded.
 -- }

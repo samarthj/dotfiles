@@ -1,76 +1,55 @@
-require'lspconfig'.bashls.setup()
-require'lspconfig'.clangd.setup()
-require'lspconfig'.cmake.setup()
-require'lspconfig'.dockerls.setup()
-require'lspconfig'.gopls.setup()
-require'lspconfig'.graphql.setup()
-require'lspconfig'.html.setup()
-require'lspconfig'.intelephense.setup()
+local lspconfig = require('lspconfig')
+-- lspconfig.bashls.setup()
+-- lspconfig.clangd.setup()
+-- lspconfig.cmake.setup()
+-- lspconfig.dockerls.setup()
+-- lspconfig.gopls.setup()
+-- -- lspconfig.graphql.setup()
+-- lspconfig.html.setup()
+-- lspconfig.intelephense.setup()
 
-require'lspconfig'.jsonls.setup {
-    commands = {
-        Format = {function()
-            vim.lsp.buf.range_formatting({}, {0, 0}, {vim.fn.line("$"), 0})
-        end}
-    }
-}
+-- lspconfig.jsonls.setup {
+--     commands = {
+--         Format = { function()
+--             vim.lsp.buf.range_formatting({}, { 0, 0 }, { vim.fn.line("$"), 0 })
+--         end }
+--     }
+-- }
 
-require'lspconfig'.rls.setup {
-    settings = {
-        rust = {
-            unstable_features = true,
-            build_on_save = false,
-            all_features = true
-        }
-    }
-}
+-- lspconfig.pyright.setup()
+-- lspconfig.sqlls.setup()
+-- lspconfig.vimls.setup()
+-- lspconfig.yamlls.setup()
 
-require'lspconfig'.pyright.setup()
-require'lspconfig'.sqlls.setup()
-require'lspconfig'.vimls.setup()
-require'lspconfig'.yamlls.setup()
+-- local on_attach = function(client)
+-- require('cmp').on_attach(client)
+-- end
 
--- Enable (broadcasting) snippet capability for completion
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-
-require'lspconfig'.cssls.setup {
-    capabilities = capabilities
-}
-require'lspconfig'.html.setup {
-    capabilities = capabilities
-}
-
-local on_attach = function(client)
-    require'completion'.on_attach(client)
-end
-
-require'lspconfig'.rust_analyzer.setup({
-    on_attach = on_attach,
-    settings = {
-        ["rust-analyzer"] = {
-            assist = {
-                importGranularity = "module",
-                importPrefix = "by_self"
-            },
-            cargo = {
-                loadOutDirsFromCheck = true
-            },
-            procMacro = {
-                enable = true
-            }
-        }
-    }
-})
-
-local nvim_lsp = require('lspconfig')
+-- lspconfig.rust_analyzer.setup({
+--     -- on_attach = on_attach,
+--     settings = {
+--         ["rust-analyzer"] = {
+--             assist = {
+--                 importGranularity = "module",
+--                 importPrefix = "by_self"
+--             },
+--             cargo = {
+--                 loadOutDirsFromCheck = true
+--             },
+--             procMacro = {
+--                 enable = true
+--             }
+--         }
+--     }
+-- })
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
+local my_custom_on_attach = function(client, bufnr)
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
+
     local function buf_set_option(...)
         vim.api.nvim_buf_set_option(bufnr, ...)
     end
@@ -105,11 +84,45 @@ local on_attach = function(client, bufnr)
 
 end
 
+local cmp_nvim_lsp = require('cmp_nvim_lsp')
+
+-- Add additional capabilities supported by nvim-cmp
+local capabilities = cmp_nvim_lsp.default_capabilities()
+-- Enable (broadcasting) snippet capability for completion
+-- capabilities.textDocument.completion.completionItem.snippetSupport = true
+
+-- Enable some language servers with the additional completion capabilities offered by nvim-cmp
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = {"pyright", "rust_analyzer", "tsserver"}
+local servers = {
+    'bashls',
+    'cmake',
+    'clangd',
+    'cssls',
+    'diagnosticls',
+    'dockerls',
+    'eslint',
+    'gopls',
+    'groovyls',
+    'html',
+    'intelephense',
+    'jsonls',
+    'luau_lsp',
+    'marksman',
+    'perlls',
+    'pyright',
+    'rust_analyzer',
+    'sqlls',
+    'taplo',
+    'terraformls',
+    'tsserver',
+    'vimls',
+    'vuels',
+    'yamlls',
+}
 for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup {
-        on_attach = on_attach
+    lspconfig[lsp].setup {
+        -- on_attach = my_custom_on_attach,
+        capabilities = capabilities,
     }
 end

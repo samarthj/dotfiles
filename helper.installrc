@@ -157,7 +157,7 @@ install_neovim() {
   # tar -xvf -C "${HOME}/.local/" "nvim-linux64.tar.gz"
   is_os manjaro && sudo pamac install neovim-git
   is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
-  prog_exists nvim || prog_exists brew && brew install --HEAD neovim
+  prog_exists nvim || prog_exists brew && brew install neovim
 
   # install the addons
   prog_exists python3 && python3 -m pip install pynvim
@@ -329,6 +329,8 @@ install_rust_clis() {
   prog_exists fd || install_cli+=(fd-find)
   # cut replacement
   prog_exists hck || install_cli+=(hck)
+  # sort -u replacement
+  prog_exists runiq || install_cli+=(runiq)
   # TODO: fix install, failing with - Could not install openssl-sys
   # if prog_exists brew && is_os Darwin; then
   #   if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then

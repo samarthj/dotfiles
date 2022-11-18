@@ -105,7 +105,7 @@ pip3-upgrade() {
       sed 's/\s$//') |
     grep -v "Requirement already satisfied"
 }
-alias nvim-plugins='nvim +PackerSync +PackerUpdate +qall'
+alias nvim-plugins="nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'"
 
 brew-upgrade() {
   brew update

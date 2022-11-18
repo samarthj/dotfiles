@@ -119,12 +119,12 @@ update-all-the-things() {
     echo "---------------------------" &&
     echo "=====| Update pkgmgr |=====" &&
     #sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview
-    sudo echo -n "sudo" && paru -Syu --skipreview --batchinstall --sudoloop --removemake
+    GOPROXY="direct" sudo echo -n "sudo" && paru -Syu --skipreview --batchinstall --sudoloop --removemake
 
   prog_exists paru || (prog_exists pacman && prog_exists pacman && prog_exists pacman &&
     echo "---------------------------" &&
     echo "=====| Update pkgmgr |=====" &&
-    sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview)
+    GOPROXY="direct" sudo pacman -Sy && sudo powerpill -Su && paru -Su --skipreview)
 
   prog_exists apt-get &&
     echo "---------------------------" &&
@@ -146,6 +146,11 @@ update-all-the-things() {
     echo "=====| Update pipx |=======" &&
     # python3 -m pip install --user -U pipx &&
     pipx upgrade-all
+
+  prog_exists rustup &&
+    echo "---------------------------" &&
+    echo "=====| Update rust |=====" &&
+    rustup update
 
   prog_exists cargo-install-update &&
     echo "---------------------------" &&

@@ -5,6 +5,8 @@ p10k_instant_prompt="${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-$(whoam
 if [[ -r ${p10k_instant_prompt} ]]; then
   source ${p10k_instant_prompt}
 fi
+# shellcheck disable=SC1090,SC1091
+source "${HOME}/helpers.sh"
 
 setopt appendhistory autocd extendedglob notify
 
@@ -15,7 +17,6 @@ source $HOME/.env
 zmodload zsh/mapfile
 
 [ -f $HOME/personal.pathrc ] && source $HOME/personal.pathrc
-echo "paths loaded ..."
 
 # sheldon setup
 source $HOME/sheldon.zsh
@@ -41,7 +42,6 @@ export LANG=en_US.UTF-8
 export ARCHFLAGS="-arch x86_64"
 
 source $HOME/.aliasrc
-echo "aliases loaded ..."
 
 # Forcing color in terminal
 # export TERM=konsole-direct
@@ -56,7 +56,6 @@ autoload -Uz compinit && compinit -i
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-echo "p10k loaded ..."
 
 autoload -U bashcompinit
 bashcompinit

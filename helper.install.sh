@@ -1,23 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
 # shellcheck disable=SC1090,SC1091
-
-is_os() {
-  [[ "$1" == "$(uname -s)" ]] && return 0
-  [[ -f "/etc/os-release" ]] && [[ "$1" == "$(awk -F= '/^ID=/{print $2}' /etc/os-release)" ]] && return 0
-  return 1
-}
-
-file_exists() {
-  [[ -f $1 ]]
-}
-
-script_exists() {
-  [[ -s $1 ]]
-}
-
-prog_exists() {
-  command -v "$1" 1>/dev/null
-}
+source "${0%/*}"/helpers.sh
 
 os_install() {
   prog=$1
@@ -104,18 +88,6 @@ install_pipx() {
   eval "$(register-python-argcomplete pipx)"
 }
 
-setup_homebrew_prefix() {
-  if [ -z "$HOMEBREW_PREFIX" ]; then
-    if [ -d "$HOME/.linuxbrew" ]; then
-      HOMEBREW_PREFIX="$HOME/.linuxbrew"
-    elif [ -d "/home/linuxbrew/.linuxbrew" ]; then
-      HOMEBREW_PREFIX="/home/linuxbrew/.linuxbrew"
-    elif [ -d "/usr/local" ] && [ -x "/usr/local/bin/brew" ]; then
-      HOMEBREW_PREFIX="/usr/local"
-    fi
-  fi
-}
-
 # shellcheck disable=SC2016
 install_brew() {
   setup_homebrew_prefix
@@ -152,12 +124,8 @@ install_neovim() {
   prog_exists nvim && return
   echo "-------------------"
   echo "installing neovim..."
-  # latest="https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz"
-  # wget "$latest"
-  # tar -xvf -C "${HOME}/.local/" "nvim-linux64.tar.gz"
-  is_os manjaro && sudo pamac install neovim-git
-  is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable && os_install neovim
-  prog_exists nvim || prog_exists brew && brew install neovim
+  is_os ubuntu && sudo add-apt-repository ppa:neovim-ppa/unstable
+  os_install neovim
 
   # install the addons
   prog_exists python3 && python3 -m pip install pynvim
@@ -243,6 +211,18 @@ install_tmux() {
   os_install tmux
 }
 
+install_utils() {
+  os_install expect
+  os_install shellcheck
+  os_install htop
+  os_install jq
+  os_install duf
+}
+
+install_ruby() {
+  os_install ruby
+}
+
 install_docker() {
   prog_exists docker && return
   echo "-------------------"
@@ -300,114 +280,45 @@ install_rustup() {
   rustup default nightly
 }
 
+_cargo_binstall() {
+  binary=$1
+  package=$2
+  message=$3
+  prog_exists "$binary" && return
+  echo "---------"
+  echo "cargo-binstall: $package (bin:$binary, usage:$message)"
+  cargo-binstall --no-confirm "$package"
+}
+
 install_rust_clis() {
   if is_os ubuntu || is_os debian; then
     sudo apt-get install -y librust-libz-sys-dev >/dev/null
   elif is_os manjaro && ! pacman -Q zlib >/dev/null; then
     sudo pacman -Sy zlib >/dev/null
   fi
-  install_cli=()
-  # du replacement
-  prog_exists dust || install_cli+=(du-dust)
-  # ps replacement
-  prog_exists procs || install_cli+=(procs)
-  # top replacement
-  prog_exists ytop || install_cli+=(ytop)
-  # grep replacement
-  prog_exists rg || install_cli+=(ripgrep)
-  # regex creation via test samples util
-  prog_exists grex || install_cli+=(grex)
-  # ls replacement
-  prog_exists exa || os_install exa #install_cli+=(exa)
-  # s/sed/sd/g
-  prog_exists sd || install_cli+=(sd)
-  # cat replacement
-  prog_exists bat || install_cli+=(bat)
-  # git-diff pager
-  prog_exists delta || install_cli+=(git-delta)
-  # find replacement
-  prog_exists fd || install_cli+=(fd-find)
-  # cut replacement
-  prog_exists hck || install_cli+=(hck)
-  # sort -u replacement
-  prog_exists runiq || install_cli+=(runiq)
-  # TODO: fix install, failing with - Could not install openssl-sys
-  # if prog_exists brew && is_os Darwin; then
-  #   if [[ ! $(prog_exists tldr) ]] || [[ ! $(prog_exists cargo-install-update) ]]; then
-  #     export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-  #     openssl_maj_min="$(openssl version | cut -d' ' -f2 | sed -re 's|^([0-9]).([0-9])(.*)|\1.\2|g')"
-  #     openssl_ver="$(openssl version | cut -d' ' -f2)"
-  #     export OPENSSL_DIR="$(brew --cellar)/openssl@${openssl_maj_min}/${openssl_ver}"
-  #   fi
-  # fi
-  # man alternative
-  prog_exists tldr || install_cli+=(tealdeer)
-  # cargo updates
-  prog_exists cargo-install-update || install_cli+=(cargo-update)
-  # install progs
-  if [ ${#install_cli[@]} -ne 0 ]; then
-    echo "-------------------"
-    echo "installing rust_clis ${install_cli[*]}..."
-    cargo install "${install_cli[@]}"
-    prog_exists tldr && tldr --update
-  fi
-}
-
-install_completion() {
-  url="$1"
-  file="$2"
-  folder="${HOME}/.zfunc"
-
-  mkdir -p "${folder}"
-
-  if [ ! -f "${folder}/${file}" ]; then
-    curl -fsSL "${url}" -o "${folder}/${file}"
-    chmod +x "${folder}/${file}"
-  fi
-}
-
-setup_rust_clis() {
-  echo "-------------------"
-  echo "setup rust_clis..."
-
-  install_completion "https://raw.githubusercontent.com/BurntSushi/ripgrep/master/complete/_rg" "_rg"
-  install_completion "https://raw.githubusercontent.com/sharkdp/fd/master/contrib/completion/_fd" "_fd"
-
-  alias cat='bat --paging=never -p'
-  alias cut='hck'
-
-  setup_exa
-  setup_delta
-}
-
-# shellcheck disable=SC2139
-setup_exa() {
-  EXA_CMD='exa --icons --git -F'
-  alias ls="$EXA_CMD"
-  alias ll="$EXA_CMD -l"
-  alias la="$EXA_CMD -a"
-  alias lla="$EXA_CMD -la --sort=modified"
-  alias lt="$EXA_CMD --tree"
-  alias lg="$EXA_CMD --git-ignore"
-
-  install_completion "https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa" "_exa"
-  ln -sf "${HOME}/.zfunc/_exa" "${HOME}/.zfunc/_ls"
-}
-
-setup_delta() {
-  if prog_exists delta && [[ $(git config --global pager.diff) != "delta" ]]; then
-    git config --global pager.diff delta
-    git config --global pager.log delta
-    git config --global pager.reflog delta
-    git config --global pager.show delta
-
-    git config --global delta.plus-style "syntax #012800"
-    git config --global delta.minus-style "syntax #340001"
-    git config --global delta.syntax-theme "Monokai Extended"
-    git config --global delta.navigate true
-
-    git config --global interactive.diffFilter "delta --color-only"
-  fi
+  # cargo plugins
+  prog_exists cargo-binstall || (echo "preinit: installing cargo-binstall" && cargo install cargo-binstall)
+  _cargo_binstall cargo-install-update cargo-update "cargo plugin: managing updates"
+  _cargo_binstall cargo-info cargo-info "cargo plugin: crate info"
+  # cli utils
+  _cargo_binstall dust du-dust "du replacement"
+  _cargo_binstall procs procs "ps replacement"
+  _cargo_binstall btm bottom "top replacement"
+  _cargo_binstall ytop ytop "top replacement"
+  _cargo_binstall rg ripgrep "grep replacement"
+  _cargo_binstall exa exa "ls replacement"
+  _cargo_binstall sd sd "sed replacement"
+  _cargo_binstall bat bat "cat replacement"
+  _cargo_binstall fd fd-find "find replacement"
+  _cargo_binstall delta git-delta "git-diff pager"
+  _cargo_binstall tldr tealdeer "man alternative with short usage examples"
+  prog_exists tldr && tldr --update >/dev/null 2>&1
+  _cargo_binstall grex grex "regex creation util via test samples"
+  # _cargo_binstall hck hck "cut replacement"
+  # _cargo_binstall runiq runiq "sort -u replacement"
+  # extra cargo plugins
+  # _cargo_binstall cargo-outdated cargo-outdated "cargo plugin: outdated crates"
+  # _cargo_binstall cargo-edit cargo-edit "cargo plugin: Cargo commands for modifying a Cargo.toml file"
 }
 
 install_pass() {

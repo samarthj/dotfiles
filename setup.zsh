@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env zsh
 
 echo "Setting up dotfiles..."
 
@@ -33,8 +33,9 @@ declare -a files=(
   ".aliasrc"
   ".env"
   ".fdignore"
-  "helper.installrc"
-  ".installrc"
+  "helper.install.sh"
+  "helpers.sh"
+  "installer.sh"
   ".p10k.zsh"
   "sheldon.zsh"
   ".tmux.conf"

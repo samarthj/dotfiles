@@ -71,15 +71,7 @@ vim() {
   fi
 }
 
-alias pbk="/home/sam/.local/bin/buildctl --addr podman-container://buildkitd"
-
-global-find() {
-  sudo fd -E "timeshift" -E "overlay" \
-    -E "usr/share/man/*" \
-    -E "var/lib/docker/*" \
-    -E "mnt/MEDIA/*" \
-    "$@" /
-}
+alias pbk='$HOME/.local/bin/buildctl --addr podman-container://buildkitd'
 
 # Helpful aliases
 [ -z "${INSTALL_RUSTCLIS}" ] || setup_rust_clis
@@ -183,7 +175,7 @@ update-all-the-things() {
 alias yaml2js="python3 -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"
 
 # signin for 1password
-# shellcheck disable=SC2154
+# shellcheck disable=SC2154,SC2155
 op_signin() {
   if [[ -z "$OP_SESSION_my" ]]; then
     export OP_SESSION_my="$(pass 1pass | op signin --account my --raw)"
@@ -228,4 +220,6 @@ alias pc-dw='podman-compose --no-pod down'
 alias duflf='sudo duf -only local,fuse'
 
 source "$HOME/personal.aliasrc"
-echo "aliases loaded ..."
+
+# Done
+echo "${0##*/} done in $(format_time $SECONDS)..."

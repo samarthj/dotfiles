@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC1090,SC1091
-source "${HOME}"/helper.installrc
+source "${0%/*}"/helper.install.sh
 
 export POWERLEVEL9K_INSTANT_PROMPT=off
 
@@ -12,7 +12,7 @@ install_sheldon
 command -v apt-get && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)
 
 # Install the basic software
-[ -z "${INSTALL_RUBY}" ] || os_install ruby
+[ -z "${INSTALL_RUBY}" ] || install_ruby
 [ -z "${INSTALL_BREW}" ] || install_brew
 install_git
 install_dnsutils
@@ -21,11 +21,7 @@ install_pip
 install_pipx
 
 # utils
-os_install expect
-os_install shellcheck
-os_install htop
-os_install jq
-os_install duf
+install_utils
 install_tmux
 install_neovim
 install_nvim_plugins
@@ -39,7 +35,10 @@ install_nvim_plugins
 [ -z "${INSTALL_GCC}" ] || install_gcc
 [ -z "${INSTALL_NODE}" ] || install_nvm
 [ -z "${INSTALL_DOCKER}" ] || install_docker
-# [ -z "${INSTALL_FZF}" ] || install_fzf
+[ -z "${INSTALL_FZF}" ] || install_fzf
 [ -z "${INSTALL_FZF}" ] || export ENHANCD_FILTER=fzf-tmux
 [ -z "${INSTALL_PASS}" ] || install_pass
 [ -z "${INSTALL_KEYCHAIN}" ] || install_keychain
+
+# Done
+echo "${0##*/} done in $(format_time $SECONDS)..."

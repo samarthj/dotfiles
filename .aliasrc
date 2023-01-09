@@ -205,10 +205,6 @@ op_get_totp() {
   [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
 }
 
-export FZF_DEFAULT_COMMAND="fd -p --type f --hidden --follow --color never --max-results 5000000 \
-  --ignore-file ~/ws/my_dotfiles/main/.fdignore"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-
 alias dc-pup='docker-compose pull; docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-rup='docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-up='docker-compose up -d'

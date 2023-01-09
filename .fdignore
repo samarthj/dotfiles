@@ -11,3 +11,9 @@ timeshift
 var/cache
 tmp/
 pamac_tmp/
+target/release/*
+target/debug/*
+sdk/go*
+go/pkg
+__pypackages__
+.venv

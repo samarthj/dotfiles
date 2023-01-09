@@ -10,21 +10,33 @@ source "${0%/*}"/helpers.sh
 # Oh My Zsh settings here
 plugins=(
   # Autocomplete / aliases
-  git github gitignore golang
+  github
+  gitignore
+  golang
   #Admin
-  sudo systemadmin systemd
+  sudo
+  systemadmin
+  systemd
   # File / Directory management
-  copybuffer copyfile zsh-interactive-cd
+  copybuffer
+  copyfile
   # Terminal Tweaks
-  colored-man-pages colorize
+  colored-man-pages
+  colorize
   # Commandline Helpers
-  alias-finder compleat common-aliases
-  command-not-found cp encode64 extract
-  jsontools safe-paste
+  alias-finder
+  compleat #common-aliases
+  command-not-found
+  cp
+  encode64
+  extract
+  jsontools
+  safe-paste
   # programs
-  1password rust
+  1password
   # secrets
-  ssh-agent gpg-agent
+  ssh-agent
+  gpg-agent
 )
 
 # os specific plugins
@@ -36,12 +48,37 @@ is_os Darwin && plugins+=(macos)
 
 # program dependent helpers
 prog_plugins=(
-  adb ansible ant aws bazel brew
-  bundler celery docker docker-compose
-  fasd fzf gcloud httpie kate
-  keychain kubectl minikube mvn nmap node npm
-  nvm pass pip rsync ruby
-  rvm tmux ufw yarn
+  adb
+  ansible
+  ant
+  aws
+  bazel
+  brew
+  bundler
+  celery
+  docker
+  docker-compose
+  gcloud
+  git
+  httpie
+  kate
+  keychain
+  kubectl
+  minikube
+  mvn
+  nmap
+  node
+  npm
+  nvm
+  pass
+  pip
+  rsync
+  ruby
+  rust
+  rvm
+  tmux
+  ufw
+  yarn
 )
 for p in "${prog_plugins[@]}"; do
   prog_exists "$p" && plugins+=("$p")
@@ -49,13 +86,8 @@ done
 
 # init
 eval "$(sheldon source)"
-
-bindkey "^[[A" history-substring-search-up
-bindkey "^[[B" history-substring-search-down
-# shellcheck disable=SC2154
-bindkey "${terminfo[kcuu1]}" history-substring-search-up
-bindkey "${terminfo[kcud1]}" history-substring-search-down
-export HISTORY_SUBSTRING_SEARCH_ENSURE_UNIQUE=1
+sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
+echo "sheldon loaded..."
 
 # Done
 echo "${0##*/} done in $(format_time $SECONDS)..."

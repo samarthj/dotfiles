@@ -43,13 +43,13 @@ export COLORTERM=truecolor
 
 fpath=(~/.zsh/completion ~/.zfunc $fpath $HOMEBREW_PREFIX/share/zsh/site-functions)
 
-autoload bashcompinit && bashcompinit
-complete -C 'aws_completer' aws
+# autoload bashcompinit && bashcompinit
+# complete -C 'aws_completer' aws
 
-autoload -Uz compinit && compinit -i
+# autoload -Uz compinit && compinit -i
 
-autoload -U bashcompinit
-bashcompinit
+# autoload -U bashcompinit
+# bashcompinit
 
 # pip zsh completion start
 function _pip_completion {
@@ -75,7 +75,9 @@ if [ -n "$TMUX" ]; then
     renew_tmux_env_one SSH_AUTH_SOCK
   }
 else
-  function renew_tmux_env {}
+  function renew_tmux_env {
+    true
+  }
 fi
 
 function preexec {
@@ -83,15 +85,21 @@ function preexec {
 }
 
 zle -N renew_tmux_env
-# ctrl-alt-T
-bindkey -M emacs '^[^T' renew_tmux_env
-bindkey -M vicmd '^[^T' renew_tmux_env
-bindkey -M viins '^[^T' renew_tmux_env
+# # ctrl-alt-T
+# bindkey -M emacs '^[^T' renew_tmux_env
+# bindkey -M vicmd '^[^T' renew_tmux_env
+# bindkey -M viins '^[^T' renew_tmux_env
 
 umask 002
 
 [ -f $HOME/addon.zsh ] && source $HOME/addon.zsh
-[ -f /usr/share/clang/bash-autocomplete.sh ] && source /usr/share/clang/bash-autocomplete.sh
+# [ -f /usr/share/clang/bash-autocomplete.sh ] && source /usr/share/clang/bash-autocomplete.sh
+
+# zstyle ':completion:*' menu select
+fpath+=(~/.zfunc)
 
 # Initialize starship
 eval "$(starship init zsh)"
+if prog_exists bat; then
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+fi

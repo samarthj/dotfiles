@@ -34,7 +34,7 @@ Plug 'vwxyutarooo/nerdtree-devicons-syntax'
 Plug 'preservim/nerdtree' | Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'majutsushi/tagbar'
 Plug 'ctrlpvim/ctrlp.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 
 " Syntax
 Plug 'scrooloose/syntastic'

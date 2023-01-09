@@ -265,11 +265,19 @@ install_fzf() {
 }
 
 install_sheldon() {
-  prog_exists sheldon && return
+  prog_exists sheldon && ! prog_exists cargo-binstall && return
+  prog_exists sheldon && prog_exists cargo-binstall && [ -x "${HOME}/.cargo/bin/sheldon" ] && return
   echo "-------------------"
   echo "installing sheldon..."
-  curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
-    bash -s -- --repo rossmacarthur/sheldon --to "${HOME}/.local/bin"
+  if ! prog_exists cargo-binstall; then
+    curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
+      bash -s -- --repo rossmacarthur/sheldon --to "${HOME}/.local/bin"
+  else
+    cargo-binstall -y sheldon
+    if [ -f "${HOME}/.local/bin/sheldon" ]; then
+      rm -rf "${HOME}/.local/bin/sheldon"
+    fi
+  fi
 }
 
 install_rustup() {

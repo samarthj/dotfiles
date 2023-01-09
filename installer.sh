@@ -7,6 +7,8 @@ export POWERLEVEL9K_INSTANT_PROMPT=off
 
 install_ssl
 
+# install prompt
+install_starship
 # install plugin manager
 install_sheldon
 command -v apt-get && (command -v apt-sortpkgs || sudo apt-get install -y apt-utils)

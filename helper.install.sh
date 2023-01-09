@@ -280,6 +280,21 @@ install_sheldon() {
   fi
 }
 
+install_starship() {
+  prog_exists starship && ! prog_exists cargo-binstall && return
+  prog_exists starship && prog_exists cargo-binstall && [ -x "${HOME}/.cargo/bin/starship" ] && return
+  echo "-------------------"
+  echo "installing starship..."
+  if ! prog_exists cargo-binstall; then
+    os_install starship
+  else
+    cargo-binstall -y starship
+    if [ -f "${HOME}/.local/bin/starship" ]; then
+      rm -rf "${HOME}/.local/bin/starship"
+    fi
+  fi
+}
+
 install_rustup() {
   prog_exists rustup && return
   echo "-------------------"

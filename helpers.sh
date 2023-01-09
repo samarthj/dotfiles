@@ -45,9 +45,9 @@ setup_bat() {
 setup_exa() {
   EXA_CMD='exa --icons --git -F'
   alias ls="$EXA_CMD"
-  alias ll="$EXA_CMD -l"
+  alias ll="$EXA_CMD -lg --time-style=long-iso"
   alias la="$EXA_CMD -a"
-  alias lla="$EXA_CMD -la --sort=modified"
+  alias lla="$EXA_CMD -lag --sort=modified --time-style=long-iso"
   alias lt="$EXA_CMD --tree"
   alias lg="$EXA_CMD --git-ignore"
 

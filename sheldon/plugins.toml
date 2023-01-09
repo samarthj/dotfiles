@@ -37,4 +37,4 @@ apply  = ['defer']
 github = 'zsh-users/zsh-history-substring-search'
 
 [templates]
-defer = {value = 'zsh-defer source "{{ file }}"', each = true}
+defer = "{% for file in files %}zsh-defer -s -z source \"{{ file }}\"\n{% endfor %}"

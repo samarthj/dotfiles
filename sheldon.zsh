@@ -87,7 +87,6 @@ done
 # init
 eval "$(sheldon source)"
 sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
-echo "sheldon loaded..."
 
 # Done
 echo "${0##*/} done in $(format_time $SECONDS)..."

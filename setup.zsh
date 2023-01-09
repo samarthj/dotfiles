@@ -36,7 +36,6 @@ declare -a files=(
   "helper.install.sh"
   "helpers.sh"
   "installer.sh"
-  ".p10k.zsh"
   "sheldon.zsh"
   ".tmux.conf"
   ".vimrc"
@@ -54,10 +53,7 @@ declare -a config_folders=(
   "alacritty"
   "tmux"
   "bat"
-)
-
-declare -a config_files=(
-  "sheldon/plugins.toml"
+  "fzf"
 )
 
 for conf in "${config_folders[@]}"; do
@@ -70,13 +66,22 @@ for conf in "${config_folders[@]}"; do
   replace_dir "${frm}" "${dir}"
 done
 
+declare -a config_files=(
+  "sheldon/plugins.toml"
+  "starship.toml"
+)
+
 for conf in "${config_files[@]}"; do
-  dir="${config_dir}/${conf%/*}"
   frm="$(pwd)/${SCRIPT_DIR##./}/${conf}"
   if [ ! -f "$frm" ]; then
     continue
   fi
-  mkdir -p "$dir"
+  if [ "${conf%/*}" != "$conf" ]; then
+    dir="${config_dir}/${conf%/*}"
+    mkdir -p "$dir"
+  else
+    dir="${config_dir}"
+  fi
   replace_file "${frm##*/}" "${dir}" "${frm%/*}"
 done
 

@@ -1,0 +1,318 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = false
+continuation_prompt = "[∙](bright-black) "
+format = """
+$status\
+$sudo\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$package\
+\
+$fill\
+\
+$cmd_duration\
+$python\
+$rust\
+$terraform\
+$username$hostname\
+$memory_usage\
+$time\
+$shell\
+$line_break\
+$character"""
+palette = "clean"
+right_format = """
+${custom.publicip}\
+$localip\
+"""
+
+[fill]
+style = 'dimmed'
+symbol = '·'
+
+[palettes.clean]
+#color = "#<hex-color-code>" #<ansi-256-color-code>
+black = "0"
+blue = "39"
+blued = "32"
+brown = "#875f00"  # 94
+brownd = "101"
+faded = "#5f8787"  # 66'
+green = "#5fd700"  # 76
+greend = "#005f00" # 22
+greenu = "#5fff00" # 82
+orange = "#ff8700" # 208
+red = "196"
+yellow = "184"
+yellowd = "178"
+yellowu = "190"
+
+[character]
+error_symbol = "[❯](red)"
+success_symbol = "[❯](purple)"
+vimcmd_symbol = "[❮](green)"
+
+[aws]
+format = '[$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
+style = "yellow"
+symbol = " "
+
+[azure]
+format = "on [$symbol($subscription)]($style) "
+style = "blue"
+symbol = " "
+
+[buf]
+style = "blue"
+symbol = " "
+
+[c]
+style = "149"
+symbol = " "
+
+[cmd_duration]
+format = "[祥$duration]($style)"
+min_time = 500
+style = "brownd"
+
+[conda]
+style = "green"
+symbol = " "
+
+[dart]
+style = "bold"
+symbol = " "
+
+[directory]
+home_symbol = " ~"
+read_only = " "
+style = "blued"
+truncate_to_repo = false
+truncation_length = 5
+
+[directory.substitutions]
+".config" = " "
+".local/share" = " "
+"Documents" = " "
+"Downloads" = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[gcloud]
+format = "[$symbol\\($account(@$domain)(|$region)\\)]($style) "
+style = "blue"
+symbol = " "
+
+[git_branch]
+format = "[$symbol$branch]($style)"
+style = "green"
+symbol = " "
+
+[git_commit]
+style = "green"
+
+[git_metrics]
+added_style = "green"
+deleted_style = "red"
+disabled = false
+format = '[\[](dimmed)([+$added]($added_style))[|](dimmed)([-$deleted]($deleted_style))[\]](dimmed)'
+only_nonzero_diffs = true
+
+[git_status]
+conflicted = "[(c$count)](red)"
+deleted = "[(d$count)](red)"
+format = "[[($conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style) "
+ignore_submodules = true
+modified = '[(!$count)](orange)'
+renamed = "[(r$count)](blue)"
+staged = '[(+$count)](yellowd)'
+stashed = '[(*$count)](greend)'
+style = "dimmed"
+untracked = '[(?$count)](blue)'
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[golang]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = "⌘ "
+
+[hg_branch]
+symbol = " "
+
+[hostname]
+format = "[@$hostname]($style) "
+ssh_only = true
+style = "yellowd"
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[localip]
+disabled = false
+format = "[ $localipv4]($style) "
+ssh_only = false
+style = "blue"
+
+[lua]
+symbol = " "
+
+[memory_usage]
+disabled = false
+format = "[$symbol$ram_pct(|$swap_pct)]($style) "
+style = "faded"
+symbol = " "
+threshold = 33
+
+[meson]
+symbol = "喝 "
+
+[nim]
+symbol = " "
+
+[nix_shell]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[openstack]
+symbol = "  "
+
+[os]
+disabled = true
+style = "dimmed"
+
+[os.symbols]
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "﯑ "
+Gentoo = " "
+HardenedBSD = "ﲊ "
+Illumos = " "
+Linux = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = " "
+OracleLinux = " "
+Pop = " "
+Raspbian = " "
+RedHatEnterprise = " "
+Redhat = " "
+Redox = " "
+SUSE = " "
+Solus = "ﴱ "
+Ubuntu = " "
+Unknown = " "
+Windows = " "
+openSUSE = " "
+
+[package]
+format = "[$symbol$version]($style) "
+style = "208"
+symbol = " "
+
+[perl]
+symbol = " "
+
+[python]
+format = "[$virtualenv]($style) "
+style = "bright-black"
+symbol = " "
+
+[rlang]
+symbol = "ﳒ "
+
+[ruby]
+symbol = " "
+
+[rust]
+format = '[$symbol($numver)]($style)[_$toolchain]($style bold dimmed) '
+style = "red"
+symbol = ' '
+# version_format = "${major}.${minor}.${patch}"
+
+[scala]
+symbol = " "
+
+[spack]
+symbol = "🅢 "
+
+[status]
+disabled = false
+format = "[$symbol$common_meaning$signal_name$maybe_int]($style) "
+map_symbol = true
+not_executable_symbol = "ﮖ "
+not_found_symbol = " "
+pipestatus = true
+pipestatus_format = '[\[](dimmed)$pipestatus[\]](dimmed) '
+pipestatus_segment_format = '[$symbol$common_meaning$signal_name$maybe_int]($style)'
+pipestatus_separator = "[|](dimmed)"
+recognize_signal_code = true
+sigint_symbol = ""
+signal_symbol = ""
+style = "red"
+symbol = " "
+
+[sudo]
+disabled = false
+format = "[$symbol]($style)"
+style = "red"
+symbol = " "
+
+[time]
+disabled = false
+format = '[ $time]($style)'
+style = "faded"
+time_format = '%T'
+
+[username]
+format = "[$user]($style)"
+style_root = "bright-red bold"
+style_user = "yellowd"
+
+[custom.publicip]
+command = 'dig +short myip.opendns.com @resolver1.opendns.com'
+format = "[$symbol($output )]($style)"
+style = "brown"
+symbol = " "
+when = true

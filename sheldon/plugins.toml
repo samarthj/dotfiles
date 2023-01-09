@@ -4,6 +4,7 @@ shell = "zsh"
 github = 'romkatv/zsh-defer'
 
 [plugins.oh-my-zsh]
+apply = ["omz_init", "defer"]
 github = 'ohmyzsh/ohmyzsh'
 
 [plugins.powerlevel10k]

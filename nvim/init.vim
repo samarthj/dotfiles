@@ -13,7 +13,7 @@ let g:vim_indent_cont = 0
 
 "---------------------------------- Options -----------------------------------"
 set hidden
-set noexpandtab softtabstop=0 tabstop=4 shiftwidth=4
+set expandtab softtabstop=2 tabstop=2 shiftwidth=2
 set autoindent smartindent
 set list listchars=tab:⇥\ ,trail:·
 set cursorline colorcolumn=120

@@ -51,7 +51,7 @@ augroup filetype_options
   autocmd!
   autocmd FileType
         \ go,make,c,cpp,python
-        \ setlocal shiftwidth=4 tabstop=4 noexpandtab
+        \ setlocal shiftwidth=4 tabstop=4 expandtab
   autocmd FileType
         \ java,groovy,csharp,cabal
         \ setlocal shiftwidth=4 tabstop=4 expandtab

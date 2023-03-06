@@ -4,7 +4,7 @@ shell = "zsh"
 github = 'romkatv/zsh-defer'
 
 [plugins.oh-my-zsh]
-apply = ["omz_init", "defer"]
+apply = ["omz_init", "source"]
 github = 'ohmyzsh/ohmyzsh'
 
 # [plugins.enhancd]
@@ -12,7 +12,7 @@ github = 'ohmyzsh/ohmyzsh'
 # github = 'b4b4r07/enhancd'
 
 [plugins.fzf]
-apply = ["defer", "fzf_post"]
+apply = ["source","fzf_post"]
 github = 'junegunn/fzf'
 
 [plugins.fzf-zsh-completions]
@@ -31,12 +31,12 @@ github = 'smeagol74/zsh-fzf-pass'
 # apply = ["defer"]
 # remote = "https://github.com/junegunn/fzf-git.sh/raw/main/fzf-git.sh"
 
-[plugins.blackbox]
-apply = ["defer"]
-github = "StackExchange/blackbox"
+# [plugins.blackbox]
+# apply = ["defer"]
+# github = "StackExchange/blackbox"
 
 [plugins.zoxide]
-apply = ["defer", "zoxide_post"]
+apply = ["source", "zoxide_post"]
 github = "ajeetdsouza/zoxide"
 
 # [plugins.zsh-completions]
@@ -48,7 +48,7 @@ github = "ajeetdsouza/zoxide"
 # github = 'changyuheng/zsh-interactive-cd'
 
 [plugins.zsh-autocomplete]
-apply = ['zsh_autocomplete_init', 'defer', 'zsh_autocomplete_post']
+apply = ['zsh_autocomplete_init', 'source', 'zsh_autocomplete_post']
 github = 'marlonrichert/zsh-autocomplete'
 
 # [plugins.zsh-autosuggestions]
@@ -80,7 +80,7 @@ export FZF_DEFAULT_OPTS="--height=40% --layout=reverse"
 export FZF_TMUX_OPTS="-r 50%"
 
 # Maximum results for an fd search
-fd_max_results="--max-results=50000"
+fd_max_results="--max-results=10000"
 
 
 # Directory completion
@@ -116,7 +116,12 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -200'"
 
 # ^R (History completion)
 # format history results with shfmt & bat if available
-if prog_exists shfmt && prog_exists bat; then
+if prog_exists bat; then
+  export FZF_CTRL_R_OPTS="--ansi \
+    --preview 'echo {} | uniq | \
+      bat -l=bash -p --pager=never --color=always' \
+    --preview-window down:wrap --bind '?:toggle-preview'"
+elif prog_exists shfmt && prog_exists bat; then
   export FZF_CTRL_R_OPTS="--ansi \
     --preview 'echo {} | shfmt -i=2 -s | \
       bat -l=bash -p --pager=never --color=always' \
@@ -148,7 +153,7 @@ zstyle ':autocomplete:*' default-context ''
 # '': Start each new command line with normal autocompletion.
 # history-incremental-search-backward: Start in live history search mode.
 
-zstyle ':autocomplete:*' min-delay 0.05  # seconds (float)
+zstyle ':autocomplete:*' min-delay 0.10  # seconds (float)
 # Wait this many seconds for typing to stop, before showing completions.
 
 zstyle ':autocomplete:*' min-input 2  # characters (int)
@@ -193,25 +198,25 @@ zstyle ':autocomplete:*' widget-style menu-select
 '''
 zsh_autocomplete_post = '''
 # Up arrow:
-bindkey '\e[A' up-line-or-search
-bindkey '\eOA' up-line-or-search
+bindkey '\e[A' up-line-or-history
+bindkey '\eOA' up-line-or-history
 # up-line-or-search:  Open history menu.
 # up-line-or-history: Cycle to previous history line.
 
 # Down arrow:
-bindkey '\e[B' down-line-or-select
-bindkey '\eOB' down-line-or-select
+bindkey '\e[B' down-line-or-history
+bindkey '\eOB' down-line-or-history
 # down-line-or-select:  Open completion menu.
 # down-line-or-history: Cycle to next history line.
 
 # Control-Space:
-bindkey '\0' list-expand
+# bindkey '\0' list-expand
 # list-expand:      Reveal hidden completions.
 # set-mark-command: Activate text selection.
 
 # Uncomment the following lines to disable live history search:
-# zle -A {.,}history-incremental-search-forward
-# zle -A {.,}history-incremental-search-backward
+zle -A {.,}history-incremental-search-forward
+zle -A {.,}history-incremental-search-backward
 
 # # Return key in completion menu & history menu:
 # bindkey -M menuselect '\r' .accept-line
@@ -221,34 +226,33 @@ bindkey '\0' list-expand
 
 zsh_autosuggest_post = '''
 (( ! ${+ZSH_AUTOSUGGEST_STRATEGY} )) && {
-	typeset -ga ZSH_AUTOSUGGEST_STRATEGY
-	ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+  typeset -ga ZSH_AUTOSUGGEST_STRATEGY
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 }
 
 # Widgets that clear the suggestion
 (( ! ${+ZSH_AUTOSUGGEST_CLEAR_WIDGETS} )) && {
-	typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
-	ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
-		history-search-forward
-		history-search-backward
-		history-beginning-search-forward
-		history-beginning-search-backward
-		history-substring-search-up
-		history-substring-search-down
-		up-line-or-beginning-search
-		down-line-or-beginning-search
-		up-line-or-history
-		down-line-or-history
-		accept-line
-		copy-earlier-word
-
+  typeset -ga ZSH_AUTOSUGGEST_CLEAR_WIDGETS
+  ZSH_AUTOSUGGEST_CLEAR_WIDGETS=(
+    history-search-forward
+    history-search-backward
+    history-beginning-search-forward
+    history-beginning-search-backward
+    history-substring-search-up
+    history-substring-search-down
+    up-line-or-beginning-search
+    down-line-or-beginning-search
+    up-line-or-history
+    down-line-or-history
+    accept-line
+    copy-earlier-word
     history-incremental-search-backward
     history-incremental-search-forward
     up-line-or-search
     down-line-or-select
     list-expand
     menuselect
-	)
+  )
 }
 '''
 

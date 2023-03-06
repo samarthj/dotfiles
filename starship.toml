@@ -127,21 +127,24 @@ style = "green"
 [git_metrics]
 added_style = "green"
 deleted_style = "red"
-disabled = false
+disabled = true
 format = '[\[](dimmed)([+$added]($added_style))[|](dimmed)([-$deleted]($deleted_style))[\]](dimmed)'
 only_nonzero_diffs = true
 
 [git_status]
-conflicted = "[(c$count)](red)"
-deleted = "[(d$count)](red)"
-format = "[[($conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style) "
-ignore_submodules = true
-modified = '[(!$count)](orange)'
-renamed = "[(r$count)](blue)"
-staged = '[(+$count)](yellowd)'
-stashed = '[(*$count)](greend)'
-style = "dimmed"
-untracked = '[(?$count)](blue)'
+ahead             = "[(⇡$count)](green)"
+behind            = "[(⇣$count)](orange)"
+conflicted        = "[(=$count)](red)"
+deleted           = "[(✘$count)](red)"
+diverged          = "[(⇡$ahead_count)](green)[(⇣$behind_count)](orange)"
+# format = '([\[$all_status$ahead_behind\]]($style) )'
+format            = " [($conflicted$renamed$deleted$modified$staged )($ahead_behind )($untracked$stashed )]($style) "
+modified          = '[(!$count)](orange)'
+renamed           = "[(»$count)](blue)"
+staged            = '[(+$count)](yellowd)'
+stashed           = '[(*$count)](greend)'
+style             = "dimmed"
+untracked         = '[(?$count)](blue)'
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
@@ -174,7 +177,7 @@ symbol = " "
 symbol = " "
 
 [localip]
-disabled = false
+disabled = true
 format = "[ $localipv4]($style) "
 ssh_only = false
 style = "blue"
@@ -279,19 +282,19 @@ symbol = "🅢 "
 
 [status]
 disabled = false
-format = "[$symbol$common_meaning$signal_name$maybe_int]($style) "
-map_symbol = true
-not_executable_symbol = "ﮖ "
-not_found_symbol = " "
-pipestatus = true
-pipestatus_format = '[\[](dimmed)$pipestatus[\]](dimmed) '
-pipestatus_segment_format = '[$symbol$common_meaning$signal_name$maybe_int]($style)'
-pipestatus_separator = "[|](dimmed)"
-recognize_signal_code = true
-sigint_symbol = ""
-signal_symbol = ""
-style = "red"
-symbol = " "
+# format = "[$symbol$common_meaning$signal_name$maybe_int]($style) "
+# map_symbol = true
+# not_executable_symbol = "ﮖ "
+# not_found_symbol = " "
+# pipestatus = true
+# pipestatus_format = '[\[](dimmed)$pipestatus[\]](dimmed) '
+# pipestatus_segment_format = '[$symbol$common_meaning$signal_name$maybe_int]($style)'
+# pipestatus_separator = "[|](dimmed)"
+# recognize_signal_code = true
+# sigint_symbol = ""
+# signal_symbol = ""
+# style = "red"
+# symbol = " "
 
 [sudo]
 disabled = false
@@ -310,8 +313,17 @@ format = "[$user]($style)"
 style_root = "bright-red bold"
 style_user = "yellowd"
 
+[custom.ispip]
+disabled = false
+command = 'dig +short txt ch whoami.cloudflare @198.168.0.1 -4 | sd "\"" ""'
+format = "[$symbol($output )]($style)"
+style = "brown"
+symbol = " "
+when = true
+
 [custom.publicip]
-command = 'dig +short myip.opendns.com @resolver1.opendns.com'
+disabled = false
+command = 'dig +short txt ch whoami.cloudflare @1.1.1.1 -4 | sd "\"" ""'
 format = "[$symbol($output )]($style)"
 style = "brown"
 symbol = " "

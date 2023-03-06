@@ -269,11 +269,13 @@ install_sheldon() {
   prog_exists sheldon && prog_exists cargo-binstall && [ -x "${HOME}/.cargo/bin/sheldon" ] && return
   echo "-------------------"
   echo "installing sheldon..."
-  if ! prog_exists cargo-binstall; then
+  if ! prog_exists cargo-binstall && ! prog_exists cargo; then
     curl --proto '=https' -fLsS https://rossmacarthur.github.io/install/crate.sh |
       bash -s -- --repo rossmacarthur/sheldon --to "${HOME}/.local/bin"
+  elif ! prog_exists cargo-binstall; then
+    cargo install -y sheldon
   else
-    cargo-binstall -y sheldon
+    cargo-binstall --no-confirm sheldon
     if [ -f "${HOME}/.local/bin/sheldon" ]; then
       rm -rf "${HOME}/.local/bin/sheldon"
     fi
@@ -285,10 +287,12 @@ install_starship() {
   prog_exists starship && prog_exists cargo-binstall && [ -x "${HOME}/.cargo/bin/starship" ] && return
   echo "-------------------"
   echo "installing starship..."
-  if ! prog_exists cargo-binstall; then
+  if ! prog_exists cargo-binstall && ! prog_exists cargo; then
     os_install starship
+  elif ! prog_exists cargo-binstall; then
+    cargo install -y starship
   else
-    cargo-binstall -y starship
+    cargo-install --no-confirm starship
     if [ -f "${HOME}/.local/bin/starship" ]; then
       rm -rf "${HOME}/.local/bin/starship"
     fi
@@ -308,9 +312,19 @@ _cargo_binstall() {
   package=$2
   message=$3
   prog_exists "$binary" && return
-  echo "---------"
-  echo "cargo-binstall: $package (bin:$binary, usage:$message)"
-  cargo-binstall --no-confirm "$package"
+
+  if ! prog_exists cargo-binstall; then
+    #echo "preinit: installing cargo-binstall"
+    #cargo install -y cargo-binstall
+    #_cargo_binstall "$@"
+    echo "---------"
+    echo "cargo install: $package (bin:$binary, usage:$message)"
+    cargo install -y "$package"
+  else
+    echo "---------"
+    echo "cargo-binstall: $package (bin:$binary, usage:$message)"
+    cargo-binstall --no-confirm "$package"
+  fi
 }
 
 install_rust_clis() {
@@ -320,7 +334,6 @@ install_rust_clis() {
     sudo pacman -Sy zlib >/dev/null
   fi
   # cargo plugins
-  prog_exists cargo-binstall || (echo "preinit: installing cargo-binstall" && cargo install cargo-binstall)
   _cargo_binstall cargo-install-update cargo-update "cargo plugin: managing updates"
   _cargo_binstall cargo-info cargo-info "cargo plugin: crate info"
   # cli utils
@@ -337,6 +350,7 @@ install_rust_clis() {
   _cargo_binstall tldr tealdeer "man alternative with short usage examples"
   prog_exists tldr && tldr --update >/dev/null 2>&1
   _cargo_binstall grex grex "regex creation util via test samples"
+  _cargo_binstall zoxide zoxide "cd helper"
   # _cargo_binstall hck hck "cut replacement"
   # _cargo_binstall runiq runiq "sort -u replacement"
   # extra cargo plugins

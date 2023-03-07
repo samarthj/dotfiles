@@ -100,7 +100,7 @@ style = "blued"
 truncate_to_repo = true
 truncation_length = 5
 repo_root_style = "greend"
-repo_root_format = "[$before_root_path]($before_repo_root_style)[\\[$repo_root\\]]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 # fish_style_pwd_dir_length = 2
 
 # [directory.substitutions]

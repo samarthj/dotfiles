@@ -11,17 +11,17 @@ local highlight = utils.highlight
 local cl = colors.from_base16(vim.g.base16_theme)
 
 local mode_map = {
-    ['n'] = {'NORMAL', cl.normal},
-    ['i'] = {'INSERT', cl.insert},
-    ['R'] = {'REPLACE', cl.replace},
-    ['v'] = {'VISUAL', cl.visual},
-    ['V'] = {'V-LINE', cl.visual},
-    ['c'] = {'COMMAND', cl.command},
-    ['s'] = {'SELECT', cl.visual},
-    ['S'] = {'S-LINE', cl.visual},
-    ['t'] = {'TERMINAL', cl.terminal},
-    [''] = {'V-BLOCK', cl.visual},
-    [''] = {'S-BLOCK', cl.visual}
+    ['n'] = { 'NORMAL', cl.normal },
+    ['i'] = { 'INSERT', cl.insert },
+    ['R'] = { 'REPLACE', cl.replace },
+    ['v'] = { 'VISUAL', cl.visual },
+    ['V'] = { 'V-LINE', cl.visual },
+    ['c'] = { 'COMMAND', cl.command },
+    ['s'] = { 'SELECT', cl.visual },
+    ['S'] = { 'S-LINE', cl.visual },
+    ['t'] = { 'TERMINAL', cl.terminal },
+    [''] = { 'V-BLOCK', cl.visual },
+    [''] = { 'S-BLOCK', cl.visual }
 }
 
 local icons = {
@@ -40,10 +40,10 @@ local icons = {
 
 local function stl_mode()
     local mode = vim.fn.mode()
-    local mode_label, mode_color = unpack(mode_map[mode])
-    highlight {'StatusLine', cl.fg, cl.bg, 'bold'}
-    highlight {'StatusLineModeInv', mode_color, cl.bg, 'reverse,bold'}
-    highlight {'StatusLineMode', mode_color, cl.bg, 'bold'}
+    local mode_label, mode_color = table.unpack(mode_map[mode])
+    highlight { 'StatusLine', cl.fg, cl.bg, 'bold' }
+    highlight { 'StatusLineModeInv', mode_color, cl.bg, 'reverse,bold' }
+    highlight { 'StatusLineMode', mode_color, cl.bg, 'bold' }
     if vim.fn.winwidth(0) > 80 then
         return mode_label
     else
@@ -67,7 +67,7 @@ local function fileicon()
     if icon_hl ~= nil then
         fg = utils.hl_by_name(icon_hl).fg
     end
-    highlight {'StatusLineFileIcon', fg, cl.bg}
+    highlight { 'StatusLineFileIcon', fg, cl.bg }
     -- highlight {'StatusLineFileIcon', patched_hl_name, bang = true}
     return icon and (icon .. ' ') or ''
 end
@@ -95,7 +95,7 @@ local function lsp_connected()
     local connected = not vim.tbl_isempty(vim.lsp.buf_get_clients(0))
     local icon = connected and icons.lsp_server_icon or icons.lsp_server_disconnected
     local icon_cl = connected and cl.lsp_active or cl.lsp_inactive
-    highlight {'StatusLineLspConn', icon_cl, cl.bg}
+    highlight { 'StatusLineLspConn', icon_cl, cl.bg }
     return icon .. ' '
 end
 
@@ -110,6 +110,7 @@ end
 local function lsp_warns()
     return lsp_count(vim.diagnostic.severity.WARN, icons.lsp_warn)
 end
+
 local function lsp_errors()
     return lsp_count(vim.diagnostic.severity.ERROR, icons.lsp_error)
 end
@@ -145,19 +146,19 @@ local function build_stl()
     local mode = comp {
         stl_mode,
         hl = 'StatusLineModeInv',
-        padding = {2, 1}
+        padding = { 2, 1 }
     }
     local fileformat = comp {
         format_icon,
         hl = 'StatusLine',
-        padding = {2, 0},
+        padding = { 2, 0 },
         condition = buf_nonempty
     }
     local ft = comp {
         filetype,
         hl = 'StatusLine',
         condition = buf_nonempty,
-        padding = {2, 1},
+        padding = { 2, 1 },
         right_separator = {
             '|',
             hl = 'StatusLineMode'
@@ -207,7 +208,7 @@ local function build_stl()
             '|',
             hl = 'StatusLineModeInv'
         },
-        padding = {0, 1}
+        padding = { 0, 1 }
     }
 
     return stl.combine_components(mode, fileformat, ft, builtin.reset_highlight, builtin.alignment_separator, icon,

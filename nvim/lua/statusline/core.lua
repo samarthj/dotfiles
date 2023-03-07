@@ -30,7 +30,7 @@ function M.component_builder()
         local result = ''
         local padl, padr = 0, 0
         if type(config.padding) == 'table' and #config.padding >= 2 then
-            padl, padr = unpack(config.padding)
+            padl, padr = table.unpack(config.padding)
         elseif type(config.padding) == 'number' then
             padl, padr = config.padding, config.padding
         end
@@ -120,7 +120,7 @@ function M.on_update()
 end
 
 function M.combine_components(...)
-    return table.concat {...}
+    return table.concat { ... }
 end
 
 M.make_component = M.component_builder()

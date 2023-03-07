@@ -205,6 +205,13 @@ op_get_totp() {
   [[ $? -ne 0 ]] && op_signin && op_get_totp "$@"
 }
 
+if prog_exists bat; then
+  h() {
+    "$@" --help 2>&1 | bat --plain --language=help --paging=never
+  }
+fi
+
+# {docker,podman}-compose
 alias dc-pup='docker-compose pull; docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-rup='docker-compose up -d --force-recreate; docker image prune -f'
 alias dc-up='docker-compose up -d'
@@ -213,6 +220,13 @@ alias pc-pup='podman-compose --no-pod up -d --pull --force-recreate'
 alias pc-rup='podman-compose --no-pod up -d --force-recreate'
 alias pc-up='podman-compose --no-pod up -d --no-recreate'
 alias pc-dw='podman-compose --no-pod down'
+
+# git
+alias grbm="grb main"
+alias gcm="gco main"
+alias grhm="git reset --hard origin/main"
+
+# others
 alias duflf='sudo duf -only local,fuse'
 
 source "$HOME/personal.aliasrc"

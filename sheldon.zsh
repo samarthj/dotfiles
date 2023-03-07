@@ -33,7 +33,7 @@ plugins=(
   jsontools
   safe-paste
   # programs
-  1password
+  # 1password # not found
   # secrets
   ssh-agent
   gpg-agent

@@ -2,6 +2,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = false
+# command_timeout = 5000
 continuation_prompt = "[∙](bright-black) "
 format = """
 $status\
@@ -22,15 +23,15 @@ $rust\
 $terraform\
 $username$hostname\
 $memory_usage\
+$aws\
+$azure\
 $time\
-$shell\
 $line_break\
 $character"""
 palette = "clean"
-right_format = """
-${custom.publicip}\
-$localip\
-"""
+# right_format = """
+#${custom.publicip}\
+#"""
 
 [fill]
 style = 'dimmed'
@@ -62,11 +63,13 @@ vimcmd_symbol = "[❮](green)"
 format = '[$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
 style = "yellow"
 symbol = " "
+disabled = false
 
 [azure]
 format = "on [$symbol($subscription)]($style) "
 style = "blue"
-symbol = " "
+# symbol = "ﴃ "
+disabled = false
 
 [buf]
 style = "blue"
@@ -77,44 +80,50 @@ style = "149"
 symbol = " "
 
 [cmd_duration]
-format = "[祥$duration]($style)"
+format = "[祥$duration]($style) "
 min_time = 500
 style = "brownd"
 
 [conda]
 style = "green"
 symbol = " "
+disabled = true
 
 [dart]
 style = "bold"
 symbol = " "
+disabled = true
 
 [directory]
-home_symbol = " ~"
 read_only = " "
 style = "blued"
-truncate_to_repo = false
+truncate_to_repo = true
 truncation_length = 5
+repo_root_style = "greend"
+repo_root_format = "[$before_root_path]($before_repo_root_style)[\\[$repo_root\\]]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+# fish_style_pwd_dir_length = 2
 
-[directory.substitutions]
-".config" = " "
-".local/share" = " "
-"Documents" = " "
-"Downloads" = " "
+# [directory.substitutions]
+# ".local/share" = " "
+# "Documents" = " "
+# "Downloads" = " "
 
 [docker_context]
 symbol = " "
 
 [elixir]
 symbol = " "
+disabled = true
 
 [elm]
 symbol = " "
+disabled = true
 
 [gcloud]
 format = "[$symbol\\($account(@$domain)(|$region)\\)]($style) "
 style = "blue"
 symbol = " "
+disabled = true
 
 [git_branch]
 format = "[$symbol$branch]($style)"
@@ -129,7 +138,7 @@ added_style = "green"
 deleted_style = "red"
 disabled = true
 format = '[\[](dimmed)([+$added]($added_style))[|](dimmed)([-$deleted]($deleted_style))[\]](dimmed)'
-only_nonzero_diffs = true
+only_nonzero_diffs = false
 
 [git_status]
 ahead             = "[(⇡$count)](green)"
@@ -137,7 +146,6 @@ behind            = "[(⇣$count)](orange)"
 conflicted        = "[(=$count)](red)"
 deleted           = "[(✘$count)](red)"
 diverged          = "[(⇡$ahead_count)](green)[(⇣$behind_count)](orange)"
-# format = '([\[$all_status$ahead_behind\]]($style) )'
 format            = " [($conflicted$renamed$deleted$modified$staged )($ahead_behind )($untracked$stashed )]($style) "
 modified          = '[(!$count)](orange)'
 renamed           = "[(»$count)](blue)"
@@ -152,6 +160,7 @@ style = "bright-black"
 
 [golang]
 symbol = " "
+disabled = true
 
 [guix_shell]
 symbol = " "
@@ -253,6 +262,7 @@ openSUSE = " "
 format = "[$symbol$version]($style) "
 style = "208"
 symbol = " "
+disabled = true
 
 [perl]
 symbol = " "
@@ -282,22 +292,22 @@ symbol = "🅢 "
 
 [status]
 disabled = false
-# format = "[$symbol$common_meaning$signal_name$maybe_int]($style) "
-# map_symbol = true
-# not_executable_symbol = "ﮖ "
-# not_found_symbol = " "
-# pipestatus = true
-# pipestatus_format = '[\[](dimmed)$pipestatus[\]](dimmed) '
-# pipestatus_segment_format = '[$symbol$common_meaning$signal_name$maybe_int]($style)'
-# pipestatus_separator = "[|](dimmed)"
-# recognize_signal_code = true
-# sigint_symbol = ""
-# signal_symbol = ""
-# style = "red"
+format = "[$symbol$common_meaning$signal_name$maybe_int]($style) "
+map_symbol = true
+not_executable_symbol = "ﮖ "
+not_found_symbol = ""
+pipestatus = true
+pipestatus_format = '[\[](dimmed)$pipestatus[\]](dimmed) '
+pipestatus_segment_format = '[$symbol$common_meaning$signal_name$maybe_int]($style)'
+pipestatus_separator = "[|](dimmed)"
+recognize_signal_code = true
+sigint_symbol = ""
+signal_symbol = ""
+style = "red"
 # symbol = " "
 
 [sudo]
-disabled = false
+disabled = true
 format = "[$symbol]($style)"
 style = "red"
 symbol = " "
@@ -314,7 +324,7 @@ style_root = "bright-red bold"
 style_user = "yellowd"
 
 [custom.ispip]
-disabled = false
+disabled = true
 command = 'dig +short txt ch whoami.cloudflare @198.168.0.1 -4 | sd "\"" ""'
 format = "[$symbol($output )]($style)"
 style = "brown"

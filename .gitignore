@@ -2,3 +2,4 @@
 *nvim/plugin/packer_compiled.*
 .DS_Store
 *.orig
+*.bak

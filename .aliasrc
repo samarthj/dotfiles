@@ -232,4 +232,4 @@ alias duflf='sudo duf -only local,fuse'
 source "$HOME/personal.aliasrc"
 
 # Done
-echo "${0##*/} done in $(format_time $SECONDS)..."
+[[ -n $VERBOSE_DOTFILES ]] && echo "${0##*/} done in $(format_time $SECONDS)..."

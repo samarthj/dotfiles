@@ -348,7 +348,7 @@ install_rust_clis() {
   _cargo_binstall fd fd-find "find replacement"
   _cargo_binstall delta git-delta "git-diff pager"
   _cargo_binstall tldr tealdeer "man alternative with short usage examples"
-  prog_exists tldr && tldr --update >/dev/null 2>&1
+  prog_exists tldr && nohup tldr --update >/dev/null 2>&1 &
   _cargo_binstall grex grex "regex creation util via test samples"
   _cargo_binstall zoxide zoxide "better navigation"
   # _cargo_binstall hck hck "cut replacement"

@@ -86,7 +86,6 @@ done
 
 # init
 eval "$(sheldon source)"
-sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
 
 # Done
-echo "${0##*/} done in $(format_time $SECONDS)..."
+[[ -n $VERBOSE_DOTFILES ]] && echo "${0##*/} done in $(format_time $SECONDS)..."

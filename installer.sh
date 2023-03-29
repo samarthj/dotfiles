@@ -43,4 +43,4 @@ install_nvim_plugins
 [ -z "${INSTALL_KEYCHAIN}" ] || install_keychain
 
 # Done
-echo "${0##*/} done in $(format_time $SECONDS)..."
+[[ -n $VERBOSE_DOTFILES ]] && echo "${0##*/} done in $(format_time $SECONDS)..."

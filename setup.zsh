@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 echo "Setting up dotfiles..."
 
@@ -9,21 +9,17 @@ replace_file() {
   DIR=$2
   LOC=${3:-$(pwd)/${SCRIPT_DIR##./}}
   echo "${LOC}/${FILE} -> ${DIR}/${FILE}"
-  if [ -L "${DIR}/${FILE}" ]; then
-    rm "${DIR}/${FILE}"
-  elif [ -f "${DIR}/${FILE}" ]; then
+  if [[ ! -L "${DIR}/${FILE}" && -f "${DIR}/${FILE}" ]]; then
     mv "${DIR}/${FILE}" "${DIR}/${FILE}".orig
   fi
-  ln -s "${LOC}/${FILE}" "${DIR}/${FILE}"
+  ln -sf "${LOC}/${FILE}" "${DIR}/${FILE}"
 }
 
 replace_dir() {
   CURR=$1
   DIR=$2
   echo "${CURR} -> ${DIR}"
-  if [ -L "${DIR}" ]; then
-    rm -f "${DIR}"
-  elif [ -d "${DIR}" ]; then
+  if [[ ! -L "${DIR}" && -d "${DIR}" ]]; then
     mv "${DIR}" "${DIR}".orig
   fi
   ln -sf "${CURR}" "${DIR}"
@@ -40,10 +36,11 @@ declare -a files=(
   ".tmux.conf"
   ".vimrc"
   ".zshrc"
+  ".tmux.sh"
 )
 
 for file in "${files[@]}"; do
-  replace_file "$file" "${HOME}"
+  replace_file "${file##*/}" "${HOME}"
 done
 
 config_dir="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -54,6 +51,7 @@ declare -a config_folders=(
   "tmux"
   "bat"
   "fzf"
+  "sheldon"
 )
 
 for conf in "${config_folders[@]}"; do
@@ -67,7 +65,6 @@ for conf in "${config_folders[@]}"; do
 done
 
 declare -a config_files=(
-  "sheldon/plugins.toml"
   "starship.toml"
 )
 

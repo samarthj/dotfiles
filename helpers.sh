@@ -43,7 +43,7 @@ setup_bat() {
 
 # shellcheck disable=SC2139
 setup_exa() {
-  EXA_CMD='exa --icons --git -F'
+  EXA_CMD='exa --no-icons --git --classify'
   alias ls="$EXA_CMD"
   alias ll="$EXA_CMD -lg --time-style=long-iso"
   alias la="$EXA_CMD -a"
@@ -51,8 +51,6 @@ setup_exa() {
   alias lt="$EXA_CMD --tree"
   alias lg="$EXA_CMD --git-ignore"
 
-  setup_completion "https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa" "_exa"
-  ln -sf "${HOME}/.zfunc/_exa" "${HOME}/.zfunc/_ls"
 }
 
 setup_delta() {

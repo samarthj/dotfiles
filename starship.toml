@@ -23,6 +23,7 @@ $rust\
 $terraform\
 $username$hostname\
 $memory_usage\
+${custom.publicip}\
 $aws\
 $azure\
 $time\
@@ -322,14 +323,6 @@ time_format = '%T'
 format = "[$user]($style)"
 style_root = "bright-red bold"
 style_user = "yellowd"
-
-[custom.ispip]
-disabled = true
-command = 'dig +short txt ch whoami.cloudflare @198.168.0.1 -4 | sd "\"" ""'
-format = "[$symbol($output )]($style)"
-style = "brown"
-symbol = " "
-when = true
 
 [custom.publicip]
 disabled = false

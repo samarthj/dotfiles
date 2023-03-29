@@ -7,6 +7,16 @@ github = 'romkatv/zsh-defer'
 apply = ["omz_init", "source"]
 github = 'ohmyzsh/ohmyzsh'
 
+[plugins.completions]
+inline = """
+sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
+starship completions zsh >"$HOME/.zfunc/_starship"
+"""
+
+[plugins.exa]
+apply = ["ln_fpath"]
+remote = "https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa"
+
 # [plugins.enhancd]
 # apply = ["defer"]
 # github = 'b4b4r07/enhancd'
@@ -66,6 +76,7 @@ github = "zsh-users/zsh-syntax-highlighting"
 
 [templates]
 defer = "{% for file in files %}zsh-defer -s -z source \"{{ file }}\"\n{% endfor %}"
+ln_fpath = "{% for file in files %}zsh-defer -s -z ln -sf \"{{ file }}\" \"${HOME}/.zfunc/_{{ name }}\"\n{% endfor %}"
 omz_init = '''
 export ZSH="$XDG_DATA_HOME/sheldon/repos/github.com/ohmyzsh/ohmyzsh"
 export ZSH_CUSTOM="$ZSH/custom"

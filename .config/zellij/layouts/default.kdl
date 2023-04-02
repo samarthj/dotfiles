@@ -1,0 +1,17 @@
+layout {
+    pane size=1 borderless=true {
+        plugin location="zellij:status-bar"
+    }
+    pane
+    pane size=1 borderless=true {
+        plugin location="zellij:tab-bar"
+    }
+
+    // pane stacked=true {
+    //     pane
+    //     pane
+    //     pane command="ls"
+    //     pane command="htop"
+    //     pane edit="src/main.rs"
+    // }
+}

@@ -7,31 +7,40 @@ github = 'romkatv/zsh-defer'
 apply = ["omz_init", "source"]
 github = 'ohmyzsh/ohmyzsh'
 
-[plugins.completions]
-inline = """
-sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
-starship completions zsh >"$HOME/.zfunc/_starship"
-"""
+[plugins.zoxide]
+apply = ["source", "zoxide_post"]
+github = "ajeetdsouza/zoxide"
 
 [plugins.exa]
 apply = ["ln_fpath"]
 remote = "https://raw.githubusercontent.com/ogham/exa/master/completions/zsh/_exa"
 
-# [plugins.enhancd]
-# apply = ["defer"]
-# github = 'b4b4r07/enhancd'
-
 [plugins.fzf]
 apply = ["source","fzf_post"]
 github = 'junegunn/fzf'
+
+[plugins.completions]
+inline = """
+sheldon completions --shell zsh >"$HOME/.zfunc/_sheldon"
+zellij setup --generate-completion zsh >"$HOME/.zfunc/_zellij"
+starship completions zsh >"$HOME/.zfunc/_starship"
+"""
 
 [plugins.fzf-zsh-completions]
 apply = ["defer"]
 github = 'chitoku-k/fzf-zsh-completions'
 
+[plugins.zsh-autocomplete]
+apply = ['zsh_autocomplete_init', 'source', 'zsh_autocomplete_post']
+github = 'marlonrichert/zsh-autocomplete'
+
 [plugins.zsh-fzf-pass]
 apply = ["defer"]
 github = 'smeagol74/zsh-fzf-pass'
+
+[plugins.zsh-syntax-highlighting]
+apply = ["defer"]
+github = "zsh-users/zsh-syntax-highlighting"
 
 # [plugins.my-fzf-completions]
 # apply = ["defer"]
@@ -45,10 +54,6 @@ github = 'smeagol74/zsh-fzf-pass'
 # apply = ["defer"]
 # github = "StackExchange/blackbox"
 
-[plugins.zoxide]
-apply = ["source", "zoxide_post"]
-github = "ajeetdsouza/zoxide"
-
 # [plugins.zsh-completions]
 # apply = ["defer"]
 # github = 'zsh-users/zsh-completions'
@@ -57,18 +62,10 @@ github = "ajeetdsouza/zoxide"
 # apply = ["defer"]
 # github = 'changyuheng/zsh-interactive-cd'
 
-[plugins.zsh-autocomplete]
-apply = ['zsh_autocomplete_init', 'source', 'zsh_autocomplete_post']
-github = 'marlonrichert/zsh-autocomplete'
-
 # [plugins.zsh-autosuggestions]
 # apply = ["defer", "zsh_autosuggest_post"]
 # github = 'zsh-users/zsh-autosuggestions'
 # use = ['{{ name }}.zsh']
-
-[plugins.zsh-syntax-highlighting]
-apply = ["defer"]
-github = "zsh-users/zsh-syntax-highlighting"
 
 # [plugins.zsh-history-substring-search]
 # apply = ['defer', 'zsh_history_substring_search_post']
@@ -156,6 +153,7 @@ fi
 
 zoxide_post = '''
 export _ZO_RESOLVE_SYMLINKS=1
+eval "$(zoxide init zsh)"
 '''
 
 zsh_autocomplete_init = '''

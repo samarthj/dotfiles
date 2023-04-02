@@ -390,7 +390,7 @@ shell:
   args:
     - -l
     - -c
-    - 'tmux has-session && tmux attach || tmux'
+    - 'zellij attach -c alacritty'
 
 # Startup directory
 #

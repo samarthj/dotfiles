@@ -1,5 +1,5 @@
 *.code-workspace
-*nvim/plugin/packer_compiled.*
+*/nvim/*/packer_compiled.*
 .DS_Store
 *.orig
 *.bak

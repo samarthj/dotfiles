@@ -351,6 +351,7 @@ install_rust_clis() {
   prog_exists tldr && nohup tldr --update >/dev/null 2>&1 &
   _cargo_binstall grex grex "regex creation util via test samples"
   _cargo_binstall zoxide zoxide "better navigation"
+  _cargo_binstall zellij zellij "tmux replacement"
   # _cargo_binstall hck hck "cut replacement"
   # _cargo_binstall runiq runiq "sort -u replacement"
   # extra cargo plugins

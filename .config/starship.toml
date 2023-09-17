@@ -2,7 +2,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = false
-# command_timeout = 5000
+command_timeout = 1000
 continuation_prompt = "[∙](bright-black) "
 format = """
 $status\
@@ -61,10 +61,10 @@ success_symbol = "[❯](purple)"
 vimcmd_symbol = "[❮](green)"
 
 [aws]
+disabled = false
 format = '[$symbol($profile )(\($region\) )(\[$duration\] )]($style)'
 style = "yellow"
 symbol = " "
-disabled = false
 
 [azure]
 format = "on [$symbol($subscription)]($style) "
@@ -86,22 +86,22 @@ min_time = 500
 style = "brownd"
 
 [conda]
+disabled = true
 style = "green"
 symbol = " "
-disabled = true
 
 [dart]
+disabled = true
 style = "bold"
 symbol = " "
-disabled = true
 
 [directory]
 read_only = " "
+repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+repo_root_style = "greend"
 style = "blued"
 truncate_to_repo = true
 truncation_length = 5
-repo_root_style = "greend"
-repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 # fish_style_pwd_dir_length = 2
 
 # [directory.substitutions]
@@ -113,18 +113,18 @@ repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root]($re
 symbol = " "
 
 [elixir]
-symbol = " "
 disabled = true
+symbol = " "
 
 [elm]
-symbol = " "
 disabled = true
+symbol = " "
 
 [gcloud]
+disabled = true
 format = "[$symbol\\($account(@$domain)(|$region)\\)]($style) "
 style = "blue"
 symbol = " "
-disabled = true
 
 [git_branch]
 format = "[$symbol$branch]($style)"
@@ -142,26 +142,26 @@ format = '[\[](dimmed)([+$added]($added_style))[|](dimmed)([-$deleted]($deleted_
 only_nonzero_diffs = false
 
 [git_status]
-ahead             = "[(⇡$count)](green)"
-behind            = "[(⇣$count)](orange)"
-conflicted        = "[(=$count)](red)"
-deleted           = "[(✘$count)](red)"
-diverged          = "[(⇡$ahead_count)](green)[(⇣$behind_count)](orange)"
-format            = " [($conflicted$renamed$deleted$modified$staged )($ahead_behind )($untracked$stashed )]($style) "
-modified          = '[(!$count)](orange)'
-renamed           = "[(»$count)](blue)"
-staged            = '[(+$count)](yellowd)'
-stashed           = '[(*$count)](greend)'
-style             = "dimmed"
-untracked         = '[(?$count)](blue)'
+ahead = "[(⇡$count)](green)"
+behind = "[(⇣$count)](orange)"
+conflicted = "[(=$count)](red)"
+deleted = "[(✘$count)](red)"
+diverged = "[(⇡$ahead_count)](green)[(⇣$behind_count)](orange)"
+format = " [($conflicted$renamed$deleted$modified$staged )($ahead_behind )($untracked$stashed )]($style) "
+modified = '[(!$count)](orange)'
+renamed = "[(»$count)](blue)"
+staged = '[(+$count)](yellowd)'
+stashed = '[(*$count)](greend)'
+style = "dimmed"
+untracked = '[(?$count)](blue)'
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "bright-black"
 
 [golang]
-symbol = " "
 disabled = true
+symbol = " "
 
 [guix_shell]
 symbol = " "
@@ -260,10 +260,10 @@ Windows = " "
 openSUSE = " "
 
 [package]
+disabled = true
 format = "[$symbol$version]($style) "
 style = "208"
 symbol = " "
-disabled = true
 
 [perl]
 symbol = " "
@@ -325,8 +325,8 @@ style_root = "bright-red bold"
 style_user = "yellowd"
 
 [custom.publicip]
-disabled = false
 command = 'dig +short txt ch whoami.cloudflare @1.1.1.1 -4 | sd "\"" ""'
+disabled = false
 format = "[$symbol($output )]($style)"
 style = "brown"
 symbol = " "

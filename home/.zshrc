@@ -80,3 +80,5 @@ eval "$(starship init zsh)"
 if prog_exists bat; then
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 fi
+
+[ -d $HOME/.config/broot ] && source $HOME/.config/broot/launcher/bash/br
